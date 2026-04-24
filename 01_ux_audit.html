@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UX Audit — Karl v0.2 | Anna Nair</title>
+<link rel="stylesheet" href="fonts.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+:root{
+  --blue:#0A1F44;--blue-light:#1E3D80;--blue-dark:#050F26;--blue-pale:#E0ECFC;
+  --cyan:#00B8D9;--cyan-light:#7FE3F0;--cyan-dark:#008CA8;--cyan-pale:#E5F7FB;
+  --orange:#FF6B35;--orange-light:#FF8F5E;--orange-pale:#FFE8DE;
+  --light:#FAFBFC;--light2:#F4F6F9;--light3:#E8EDF3;--light4:#D1DAE5;
+  --text-dark:#0A1F44;--text-mid:#3A4A63;--text-light:#6B7A91;--text-muted:#A6B3C4;
+  --border:#E8EDF3;
+  --green:#2E9D5E;--green-pale:#D9F2E3;
+  --red:#E5484D;--red-pale:#FFE5E6;
+  --amber:#E8A317;--amber-pale:#FFF3D6;
+}
+body{
+  font-family:'Degular-Regular',sans-serif;background:var(--light);
+  color:var(--text-dark);font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+.material-symbols-rounded{font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;vertical-align:middle}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ══ GLOBAL NAV ══ */
+.gnav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 32px;background:#fff;border-bottom:1px solid var(--border);
+}
+.gnav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.gnav-logo{width:32px;height:32px;display:block}
+.gnav-wordmark{font-family:'DegularDisplay-Bold',sans-serif;color:var(--blue);font-size:16px;letter-spacing:-.01em;line-height:1}
+.gnav-wordmark .sub{font-family:'Degular-Regular',sans-serif;font-size:10.5px;color:var(--text-light);letter-spacing:.06em;margin-top:2px;display:block;text-transform:uppercase;font-weight:500}
+.gnav-links{display:flex;align-items:center;gap:4px}
+.gnav-link{
+  font-family:'Degular-Medium',sans-serif;font-size:12.5px;color:var(--text-mid);
+  text-decoration:none;padding:7px 13px;border-radius:100px;transition:all .2s;
+}
+.gnav-link:hover{color:var(--blue);background:var(--light2)}
+.gnav-link.active{background:var(--blue);color:#fff;font-family:'Degular-Bold',sans-serif}
+
+/* ══ DOC HEADER ══ */
+.doc-hero{
+  background:linear-gradient(135deg,var(--blue) 0%,var(--blue-light) 60%,var(--blue-light) 100%);
+  color:#fff;padding:72px 48px 60px;position:relative;overflow:hidden;
+}
+.doc-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,184,217,.2),transparent 60%);pointer-events:none}
+.doc-hero::after{content:'';position:absolute;bottom:-100px;left:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(255,107,53,.12),transparent 60%);pointer-events:none}
+.doc-hero-inner{max-width:1200px;margin:0 auto;position:relative;z-index:2}
+.doc-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--cyan-light);
+  letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(0,184,217,.1);border:1px solid rgba(0,184,217,.2);
+  padding:6px 14px;border-radius:100px;margin-bottom:24px;
+}
+.doc-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+.doc-hero h1{
+  font-family:'DegularDisplay-Bold',sans-serif;font-size:clamp(38px,5vw,60px);
+  line-height:1.02;letter-spacing:-.035em;margin-bottom:18px;max-width:860px;
+}
+.doc-hero h1 .accent{background:linear-gradient(135deg,var(--orange),#FFB088);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.doc-hero-sub{font-size:17px;color:rgba(255,255,255,.72);line-height:1.55;max-width:720px}
+.doc-hero-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:44px;padding-top:28px;border-top:1px solid rgba(255,255,255,.1);max-width:900px}
+.dm-label{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-bottom:8px}
+.dm-val{font-family:'DegularDisplay-Bold',sans-serif;font-size:22px;color:#fff;letter-spacing:-.02em}
+.dm-val.red{color:#FF9B9E}
+.dm-val.orange{color:var(--orange-light)}
+.dm-val.cyan{color:var(--cyan-light)}
+.dm-sub{font-family:'Degular-Regular',sans-serif;font-size:12px;color:rgba(255,255,255,.55);margin-top:4px}
+
+/* ══ SECTIONS ══ */
+section{padding:72px 48px;max-width:1200px;margin:0 auto}
+section.bg-alt{max-width:none;background:var(--light2);margin:0;padding:72px 48px}
+section.bg-alt>.inner{max-width:1200px;margin:0 auto}
+.sec-kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--cyan-dark);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;
+}
+.sec-kicker::before{content:'';width:24px;height:2px;background:var(--cyan-dark)}
+h2.sec-h{font-family:'DegularDisplay-Bold',sans-serif;font-size:clamp(28px,3.6vw,42px);line-height:1.08;letter-spacing:-.025em;color:var(--blue);margin-bottom:18px;max-width:820px}
+h2.sec-h .em{color:var(--orange)}
+.sec-lede{font-size:16.5px;color:var(--text-mid);line-height:1.6;max-width:740px;margin-bottom:40px}
+h3.sub-h{font-family:'DegularDisplay-Bold',sans-serif;font-size:22px;letter-spacing:-.015em;color:var(--blue);margin:40px 0 14px}
+
+/* ══ EXEC SUMMARY ══ */
+.exec-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;margin-top:40px;align-items:start}
+.exec-verdict{background:var(--blue);color:#fff;padding:32px;border-radius:16px;position:relative;overflow:hidden}
+.exec-verdict::after{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle at top right,rgba(0,184,217,.25),transparent 60%)}
+.exec-verdict h3{font-family:'DegularDisplay-Bold',sans-serif;font-size:22px;margin-bottom:14px;letter-spacing:-.015em;position:relative}
+.exec-verdict p{font-size:14.5px;color:rgba(255,255,255,.78);line-height:1.6;position:relative}
+.exec-verdict p+p{margin-top:12px}
+.exec-verdict strong{color:var(--cyan-light);font-family:'Degular-Bold',sans-serif}
+.pillars{display:flex;flex-direction:column;gap:14px}
+.pillar{border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:36px 1fr;gap:14px;align-items:start;transition:all .2s;background:#fff}
+.pillar:hover{border-color:var(--orange);transform:translateX(3px)}
+.p-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--orange-pale);color:var(--orange)}
+.p-icon .material-symbols-rounded{font-size:20px}
+.pillar h4{font-family:'DegularDisplay-Bold',sans-serif;font-size:14.5px;letter-spacing:-.01em;margin-bottom:4px;color:var(--blue)}
+.pillar p{font-size:13px;color:var(--text-light);line-height:1.5}
+
+/* ══ PERSONAS ══ */
+.persona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.persona{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px;position:relative;transition:all .3s ease}
+.persona::before{content:'';position:absolute;top:0;left:26px;right:26px;height:3px;border-radius:0 0 3px 3px}
+.persona.p1::before{background:var(--cyan)}
+.persona.p2::before{background:var(--orange)}
+.persona.p3::before{background:var(--blue)}
+.persona:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.pa-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.pa-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DegularDisplay-Bold',sans-serif;font-size:18px}
+.persona.p1 .pa-av{background:linear-gradient(135deg,var(--cyan),var(--cyan-dark))}
+.persona.p2 .pa-av{background:linear-gradient(135deg,var(--orange),var(--orange-light))}
+.persona.p3 .pa-av{background:linear-gradient(135deg,var(--blue),var(--blue-light))}
+.pa-name{font-family:'DegularDisplay-Bold',sans-serif;font-size:16px;letter-spacing:-.01em;color:var(--blue)}
+.pa-role{font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.pa-block{margin-top:14px}
+.pa-label{font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);margin-bottom:5px}
+.pa-block p{font-size:13px;color:var(--text-mid);line-height:1.5}
+.pa-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.pa-tag{font-size:11px;padding:3px 9px;border-radius:999px;background:var(--light2);color:var(--text-mid);font-family:'Degular-Medium',sans-serif}
+.pa-score{margin-top:18px;padding-top:14px;border-top:1px dashed var(--border);display:flex;align-items:center;justify-content:space-between}
+.ps-label{font-family:'Degular-Medium',sans-serif;font-size:10.5px;color:var(--text-light);text-transform:uppercase;letter-spacing:.1em}
+.ps-wrap{display:flex;align-items:center;gap:10px}
+.ps-bar{width:80px;height:5px;background:var(--light2);border-radius:999px;overflow:hidden}
+.ps-fill{height:100%;border-radius:999px}
+.ps-fill.mid{background:var(--amber)}
+.ps-fill.bad{background:var(--red)}
+.ps-val{font-family:'DegularDisplay-Bold',sans-serif;font-size:13px;color:var(--blue)}
+
+/* ══ ROLE TABLE ══ */
+.role-tbl{margin-top:40px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
+.role-tbl table{width:100%;border-collapse:collapse;font-size:13px}
+.role-tbl thead tr{background:var(--blue);color:#fff}
+.role-tbl th{text-align:left;padding:14px 18px;font-family:'Degular-Medium',sans-serif;font-size:12.5px;letter-spacing:-.005em}
+.role-tbl th:first-child{width:30%}
+.role-tbl td{padding:13px 18px;border-top:1px solid var(--border);vertical-align:middle}
+.role-tbl tr:nth-child(even) td{background:var(--light2)}
+.role-tbl .scr-name{font-family:'DegularDisplay-Bold',sans-serif;color:var(--blue);font-size:14px}
+.role-tbl .scr-desc{font-size:11.5px;color:var(--text-light);margin-top:2px}
+.ac{text-align:center}
+.ac .material-symbols-rounded{font-size:20px}
+.ac.yes{color:var(--green)}
+.ac.no{color:var(--text-muted)}
+.ac.partial{color:var(--amber)}
+
+/* ══ HEURISTICS ══ */
+.heur-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:32px}
+.heur{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start;transition:all .2s}
+.heur:hover{border-color:var(--cyan)}
+.heur-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-light);font-weight:600;letter-spacing:.04em}
+.heur-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:14.5px;letter-spacing:-.01em;margin-top:2px;color:var(--blue)}
+.heur-text{font-size:12px;color:var(--text-mid);line-height:1.45;margin-top:6px}
+.heur-score{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}
+.heur-score-num{font-family:'DegularDisplay-Bold',sans-serif;font-size:22px;letter-spacing:-.02em;line-height:1}
+.heur-score-bar{width:42px;height:4px;background:var(--light2);border-radius:999px;overflow:hidden}
+.heur-score-fill{height:100%;border-radius:999px}
+.h-good .heur-score-num{color:var(--green)} .h-good .heur-score-fill{background:var(--green)}
+.h-mid .heur-score-num{color:var(--amber)} .h-mid .heur-score-fill{background:var(--amber)}
+.h-bad .heur-score-num{color:var(--red)} .h-bad .heur-score-fill{background:var(--red)}
+.heur-agg{margin-top:28px;background:var(--blue);color:#fff;border-radius:14px;padding:28px 32px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.agg-num{font-family:'DegularDisplay-Bold',sans-serif;font-size:60px;letter-spacing:-.03em;line-height:1}
+.agg-num span{font-size:26px;color:rgba(255,255,255,.5)}
+.agg-label{font-family:'Degular-Medium',sans-serif;font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--cyan-light);margin-bottom:8px}
+.agg-text{font-size:15px;color:rgba(255,255,255,.85);line-height:1.55}
+
+/* ══ GAPS ══ */
+.gap-list{margin-top:32px;display:flex;flex-direction:column;gap:10px}
+.gap{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr auto;gap:16px;align-items:center;transition:all .15s}
+.gap:hover{border-color:var(--blue);transform:translateX(2px)}
+.gap-num{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:var(--text-light);padding:4px 8px;border-radius:5px;background:var(--light2);text-align:center}
+.gap-body h4{font-family:'DegularDisplay-Bold',sans-serif;font-size:14.5px;letter-spacing:-.01em;margin-bottom:3px;color:var(--blue)}
+.gap-body p{font-size:12.5px;color:var(--text-mid);line-height:1.45}
+.gap-src{font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);margin-top:5px}
+.gap-tags{display:flex;gap:6px;align-items:center}
+.sev{font-family:'Degular-Bold',sans-serif;font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.08em}
+.sev.high{background:var(--red-pale);color:var(--red)}
+.sev.med{background:var(--amber-pale);color:var(--amber)}
+.sev.low{background:var(--light2);color:var(--text-mid)}
+.eff{font-family:'Degular-Medium',sans-serif;font-size:10.5px;padding:4px 9px;border-radius:999px;background:#fff;color:var(--text-mid);border:1px solid var(--border)}
+
+/* Callout note */
+.callout{margin-top:28px;padding:18px 22px;background:var(--cyan-pale);border-radius:12px;border-left:3px solid var(--cyan);max-width:820px}
+.callout-lbl{font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan-dark);margin-bottom:8px}
+.callout p{font-size:13px;color:var(--text-mid);line-height:1.55}
+
+/* ══ PRIORITY MATRIX ══ */
+.matrix{display:grid;grid-template-columns:56px 1fr 1fr;grid-template-rows:1fr 1fr 32px;gap:10px;aspect-ratio:2/1;max-width:960px;margin:40px auto 0}
+.axis-y{grid-row:1/3;grid-column:1;display:flex;flex-direction:column;justify-content:space-between;align-items:center;font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);writing-mode:vertical-rl;transform:rotate(180deg)}
+.q{border-radius:12px;padding:18px;position:relative;overflow:hidden}
+.q-label{font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;opacity:.8}
+.q-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:14px;letter-spacing:-.01em;margin-bottom:10px;color:var(--blue)}
+.q-items{display:flex;flex-direction:column;gap:5px}
+.q-item{font-family:'Degular-Medium',sans-serif;font-size:11.5px;padding:6px 10px;background:rgba(255,255,255,.75);border-radius:6px;color:var(--blue)}
+.q.strat{background:linear-gradient(135deg,rgba(255,107,53,.14),rgba(255,107,53,.04));border:1px solid rgba(255,107,53,.3)}
+.q.strat .q-label{color:var(--orange)}
+.q.quick{background:linear-gradient(135deg,rgba(0,184,217,.14),rgba(0,184,217,.04));border:1px solid rgba(0,184,217,.3)}
+.q.quick .q-label{color:var(--cyan-dark)}
+.q.recon{background:var(--light2);border:1px dashed var(--light4)}
+.q.recon .q-label{color:var(--text-light)}
+.q.fill{background:linear-gradient(135deg,rgba(46,157,94,.12),rgba(46,157,94,.04));border:1px solid rgba(46,157,94,.25)}
+.q.fill .q-label{color:var(--green)}
+.axis-x{grid-row:3;grid-column:2/4;display:flex;justify-content:space-between;align-items:center;font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);padding:0 8px}
+
+/* ══ IA BEFORE/AFTER ══ */
+.ia-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:36px}
+.ia-col{background:#fff;border:1px solid var(--border);border-radius:14px;padding:26px}
+.ia-col.after{border-color:var(--cyan);box-shadow:0 4px 24px rgba(0,184,217,.12)}
+.ia-label{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
+.ia-col.before .ia-label{color:var(--red)}
+.ia-col.after .ia-label{color:var(--cyan-dark)}
+.ia-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:17px;letter-spacing:-.015em;margin-bottom:18px;color:var(--blue)}
+.ia-tree{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;color:var(--blue)}
+.ia-tree .node{display:block;padding-left:20px;position:relative}
+.ia-tree .l1{padding-left:0;font-weight:700}
+.ia-tree .l2{padding-left:24px}
+.ia-tree .l2::before{content:'├─';position:absolute;left:4px;color:var(--text-muted)}
+.ia-tree .l3{padding-left:48px;color:var(--text-mid)}
+.ia-tree .l3::before{content:'└─';position:absolute;left:28px;color:var(--text-muted)}
+.flag{font-size:10px;padding:2px 7px;border-radius:4px;font-family:'Degular-Bold',sans-serif;letter-spacing:.04em;margin-left:6px;vertical-align:middle;font-weight:700}
+.flag.new{background:var(--cyan);color:#fff}
+.flag.dup{background:var(--amber);color:#fff}
+.flag.bug{background:var(--red);color:#fff}
+
+/* ══ VERDICT ══ */
+.verdict{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-light) 60%,var(--blue-light) 100%);color:#fff;border-radius:20px;padding:56px;position:relative;overflow:hidden;margin-top:40px}
+.verdict::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(255,107,53,.22),transparent 60%)}
+.verdict::after{content:'';position:absolute;bottom:-80px;left:-80px;width:380px;height:380px;background:radial-gradient(circle,rgba(0,184,217,.18),transparent 60%)}
+.verdict-kicker{font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--orange-light);margin-bottom:16px;position:relative}
+.verdict-h{font-family:'DegularDisplay-Bold',sans-serif;font-size:clamp(26px,3.4vw,38px);line-height:1.1;letter-spacing:-.025em;position:relative;max-width:820px;margin-bottom:22px}
+.verdict-sub{font-size:15.5px;color:rgba(255,255,255,.78);line-height:1.55;max-width:720px;position:relative;margin-bottom:36px}
+.vp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;position:relative}
+.vp{background:rgba(255,255,255,.06);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px}
+.vp-num{font-family:'Degular-Medium',sans-serif;font-size:10.5px;color:var(--cyan-light);letter-spacing:.14em;margin-bottom:8px}
+.vp h4{font-family:'DegularDisplay-Bold',sans-serif;font-size:15px;letter-spacing:-.01em;margin-bottom:6px}
+.vp p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5}
+
+/* ══ FOOTER ══ */
+.foot{background:var(--blue-dark);color:rgba(255,255,255,.5);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px}
+.foot-brand{color:#fff;font-family:'DegularDisplay-Bold',sans-serif;display:flex;align-items:center;gap:10px;letter-spacing:-.01em}
+.foot-brand img{width:24px;height:24px}
+.foot-nav{display:flex;gap:10px}
+.foot-link{font-size:12px;padding:5px 11px;border-radius:6px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);text-decoration:none;font-family:'Degular-Medium',sans-serif;border:1px solid rgba(255,255,255,.08);transition:all .15s}
+.foot-link:hover{background:rgba(255,255,255,.12);color:#fff}
+.foot-link.current{background:var(--orange);color:#fff;border-color:var(--orange)}
+
+@media (max-width:980px){
+  .doc-hero-meta{grid-template-columns:repeat(2,1fr);gap:20px}
+  .exec-grid,.ia-grid{grid-template-columns:1fr}
+  .persona-grid,.heur-grid,.vp-grid{grid-template-columns:1fr}
+  .role-tbl{overflow-x:auto}
+  .role-tbl table{min-width:720px}
+  .matrix{aspect-ratio:auto;grid-template-rows:auto auto auto auto 32px;grid-template-columns:1fr}
+  .axis-y{display:none}
+  .axis-x{grid-column:1}
+  .gnav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- GLOBAL NAV -->
+<nav class="gnav">
+  <a href="index.html" class="gnav-brand">
+    <img src="logo-gradient.png" class="gnav-logo" alt="Karl">
+    <div class="gnav-wordmark">Karl<span class="sub">v0.2 UX Package</span></div>
+  </a>
+  <div class="gnav-links">
+    <a href="index.html" class="gnav-link">Case Study</a>
+    <a href="01_ux_audit.html" class="gnav-link active">Audit</a>
+    <a href="02_layouts.html" class="gnav-link">Layouts</a>
+    <a href="03_prototype.html" class="gnav-link">Prototype</a>
+    <a href="04_user_guide.html" class="gnav-link">Guide</a>
+  </div>
+</nav>
+
+<!-- DOC HERO -->
+<section class="doc-hero">
+  <div class="doc-hero-inner">
+    <div class="doc-eyebrow"><span class="doc-eyebrow-dot"></span>Deliverable 01 of 04 · UX Audit &amp; Strategy</div>
+    <h1>Karl v0.1 is a <span class="accent">capable product</span> with sharp edges that will cost support tickets.</h1>
+    <p class="doc-hero-sub">13 gaps across the product surface and documentation. Prioritized. Sequenced for v0.2. The AI core isn't the problem — the scaffolding around it is.</p>
+    <div class="doc-hero-meta">
+      <div><div class="dm-label">Gaps</div><div class="dm-val">13</div><div class="dm-sub">10 from v0.1 audit + 4 new</div></div>
+      <div><div class="dm-label">Blocking</div><div class="dm-val red">4</div><div class="dm-sub">Must ship in v0.2</div></div>
+      <div><div class="dm-label">Heuristic</div><div class="dm-val orange">6.4/10</div><div class="dm-sub">Nielsen composite</div></div>
+      <div><div class="dm-label">Personas</div><div class="dm-val cyan">3</div><div class="dm-sub">Colliding in flat nav</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXEC SUMMARY -->
+<section>
+  <div class="sec-kicker">01 · Executive Summary</div>
+  <h2 class="sec-h">The product works. The scaffolding doesn't.</h2>
+  <p class="sec-lede">Karl's core loop — ask in English, get SQL, get an answer — is solid. The gaps are in onboarding, role clarity, error recovery, and mechanics users need to trust the system.</p>
+
+  <div class="exec-grid">
+    <div class="exec-verdict">
+      <h3>Why stakeholders should care</h3>
+      <p>v0.1 ships with <strong>zero documented error states</strong>, no role matrix, and an unexplained activation mechanism the guide itself flags as vague. For a product promising "no SQL expertise required," the hidden complexity breaks the promise.</p>
+      <p><strong>Four of the thirteen gaps</strong> — role matrix, CSV import format, error documentation, glossary on first use — account for the majority of predicted support friction. All shippable in v0.2 without touching the NL2SQL engine.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><div class="p-icon"><span class="material-symbols-rounded">visibility</span></div><div><h4>Role clarity</h4><p>Admin and user surfaces mixed in a flat nav.</p></div></div>
+      <div class="pillar"><div class="p-icon"><span class="material-symbols-rounded">error</span></div><div><h4>Error states undefined</h4><p>Failed connects, bad SQL, timeouts — none documented.</p></div></div>
+      <div class="pillar"><div class="p-icon"><span class="material-symbols-rounded">school</span></div><div><h4>Trust requires transparency</h4><p>Users need to see SQL, know when training applies.</p></div></div>
+      <div class="pillar"><div class="p-icon"><span class="material-symbols-rounded">menu_book</span></div><div><h4>Docs leak product bugs</h4><p>Section 07 claims a numbering bug that doesn't exist.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section class="bg-alt">
+  <div class="inner">
+    <div class="sec-kicker">02 · Users</div>
+    <h2 class="sec-h">Three personas. Karl serves two well.</h2>
+    <p class="sec-lede">Grounded in the guide's role split (business user, admin) plus a power user inferred from the training-data workflow — someone who owns SQL quality but isn't the tenant admin.</p>
+
+    <div class="persona-grid">
+      <div class="persona p1">
+        <div class="pa-head"><div class="pa-av">P</div><div><div class="pa-name">Priya Nair</div><div class="pa-role">Business User · Finance</div></div></div>
+        <div class="pa-block"><div class="pa-label">Job to be done</div><p>Answer ad-hoc revenue questions for her VP without pinging the data team.</p></div>
+        <div class="pa-block"><div class="pa-label">Knows</div><div class="pa-tags"><span class="pa-tag">Excel</span><span class="pa-tag">Business metrics</span><span class="pa-tag">Dashboards</span></div></div>
+        <div class="pa-block"><div class="pa-label">v0.1 friction</div><p>Sees Training Data in the nav. Doesn't know if she can touch it. If she does, she can break Karl for her team.</p></div>
+        <div class="pa-score"><div class="ps-label">v0.1 fit</div><div class="ps-wrap"><div class="ps-bar"><div class="ps-fill mid" style="width:60%"></div></div><div class="ps-val">6/10</div></div></div>
+      </div>
+      <div class="persona p2">
+        <div class="pa-head"><div class="pa-av">R</div><div><div class="pa-name">Raj Srinivasan</div><div class="pa-role">Power User · Data Analyst</div></div></div>
+        <div class="pa-block"><div class="pa-label">Job to be done</div><p>Make Karl accurate for his team. Owns the training pair library.</p></div>
+        <div class="pa-block"><div class="pa-label">Knows</div><div class="pa-tags"><span class="pa-tag">SQL</span><span class="pa-tag">Schema</span><span class="pa-tag">BI</span><span class="pa-tag">Python</span></div></div>
+        <div class="pa-block"><div class="pa-label">v0.1 friction</div><p>Bulk imports 200 pairs. No preview, no validation report, unclear if they apply immediately or require a sync.</p></div>
+        <div class="pa-score"><div class="ps-label">v0.1 fit</div><div class="ps-wrap"><div class="ps-bar"><div class="ps-fill bad" style="width:40%"></div></div><div class="ps-val">4/10</div></div></div>
+      </div>
+      <div class="persona p3">
+        <div class="pa-head"><div class="pa-av">M</div><div><div class="pa-name">Meera Kapoor</div><div class="pa-role">Administrator · IT</div></div></div>
+        <div class="pa-block"><div class="pa-label">Job to be done</div><p>Configure Karl, connect data sources, report usage to her CIO.</p></div>
+        <div class="pa-block"><div class="pa-label">Knows</div><div class="pa-tags"><span class="pa-tag">IT admin</span><span class="pa-tag">SSO / RBAC</span><span class="pa-tag">Governance</span></div></div>
+        <div class="pa-block"><div class="pa-label">v0.1 friction</div><p>Telemetry is three metrics, no drill-down, no export. Rebuilds the CIO deck in Excel every quarter.</p></div>
+        <div class="pa-score"><div class="ps-label">v0.1 fit</div><div class="ps-wrap"><div class="ps-bar"><div class="ps-fill mid" style="width:55%"></div></div><div class="ps-val">5.5/10</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLE MATRIX -->
+<section>
+  <div class="sec-kicker">03 · Role &amp; Access Matrix</div>
+  <h2 class="sec-h">v0.1's biggest gap: users don't know which screens are theirs.</h2>
+  <p class="sec-lede">The matrix v0.1 is missing. Priya, Raj, and Meera mapped against every screen.</p>
+
+  <div class="role-tbl">
+    <table>
+      <thead><tr><th>Screen</th><th style="text-align:center">Priya · User</th><th style="text-align:center">Raj · Power</th><th style="text-align:center">Meera · Admin</th><th>v0.1 behavior</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="scr-name">Home / Connect</div><div class="scr-desc">Choose a data source</div></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td style="font-size:12px;color:var(--text-mid)">Visible to all — correct</td>
+        </tr>
+        <tr>
+          <td><div class="scr-name">Conversation</div><div class="scr-desc">NL-to-SQL interface</div></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td style="font-size:12px;color:var(--text-mid)">Visible to all — correct</td>
+        </tr>
+        <tr>
+          <td><div class="scr-name">Training Data</div><div class="scr-desc">SQL–language pairs</div></td>
+          <td class="ac no"><span class="material-symbols-rounded">cancel</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td style="font-size:12px;color:var(--red)"><strong>Gap:</strong> visible to all, Priya can add invalid pairs</td>
+        </tr>
+        <tr>
+          <td><div class="scr-name">Knowledge Guide</div><div class="scr-desc">Critical + Auxiliary Instructions</div></td>
+          <td class="ac no"><span class="material-symbols-rounded">cancel</span></td>
+          <td class="ac partial"><span class="material-symbols-rounded">remove_circle</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td style="font-size:12px;color:var(--red)"><strong>Gap:</strong> no gating, Raj can edit Critical</td>
+        </tr>
+        <tr>
+          <td><div class="scr-name">Telemetry</div><div class="scr-desc">Usage analytics</div></td>
+          <td class="ac no"><span class="material-symbols-rounded">cancel</span></td>
+          <td class="ac no"><span class="material-symbols-rounded">cancel</span></td>
+          <td class="ac yes"><span class="material-symbols-rounded">check_circle</span></td>
+          <td style="font-size:12px;color:var(--green)">Noted as admin-only in guide — enforce in UI</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- HEURISTICS -->
+<section class="bg-alt">
+  <div class="inner">
+    <div class="sec-kicker">04 · Heuristic Evaluation</div>
+    <h2 class="sec-h">6.4/10 against Nielsen's 10 heuristics.</h2>
+    <p class="sec-lede">Strong on aesthetic and flexibility. Weak on error handling, status visibility, and recovery — exactly what Section 07 already flags.</p>
+
+    <div class="heur-grid">
+      <div class="heur h-mid"><div><div class="heur-num">H1</div><div class="heur-title">Visibility of system status</div><div class="heur-text">Chat shows query progress. No training sync state, no connection health indicator.</div></div><div class="heur-score"><div class="heur-score-num">6</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:60%"></div></div></div></div>
+      <div class="heur h-good"><div><div class="heur-num">H2</div><div class="heur-title">Match system to real world</div><div class="heur-text">"Ask in plain English" is the core promise — Karl delivers it.</div></div><div class="heur-score"><div class="heur-score-num">9</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:90%"></div></div></div></div>
+      <div class="heur h-bad"><div><div class="heur-num">H3</div><div class="heur-title">User control &amp; freedom</div><div class="heur-text">No undo on training edits. No version history on Knowledge Guide. Source switch silently wipes context.</div></div><div class="heur-score"><div class="heur-score-num">4</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:40%"></div></div></div></div>
+      <div class="heur h-mid"><div><div class="heur-num">H4</div><div class="heur-title">Consistency &amp; standards</div><div class="heur-text">"Critical" vs "Auxiliary" is product-specific jargon that needs glossing on first use.</div></div><div class="heur-score"><div class="heur-score-num">7</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:70%"></div></div></div></div>
+      <div class="heur h-bad"><div><div class="heur-num">H5</div><div class="heur-title">Error prevention</div><div class="heur-text">CSV import has no preview or validation. Bad SQL in training pairs degrades Karl silently.</div></div><div class="heur-score"><div class="heur-score-num">3</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:30%"></div></div></div></div>
+      <div class="heur h-mid"><div><div class="heur-num">H6</div><div class="heur-title">Recognition over recall</div><div class="heur-text">Data-source context isn't persistent in the chrome — users lose track.</div></div><div class="heur-score"><div class="heur-score-num">6</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:60%"></div></div></div></div>
+      <div class="heur h-good"><div><div class="heur-num">H7</div><div class="heur-title">Flexibility &amp; efficiency</div><div class="heur-text">The product has two speeds — power features for analysts, simple chat for business users.</div></div><div class="heur-score"><div class="heur-score-num">8</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:80%"></div></div></div></div>
+      <div class="heur h-good"><div><div class="heur-num">H8</div><div class="heur-title">Aesthetic &amp; minimalist</div><div class="heur-text">Clean interface, no visible feature bloat.</div></div><div class="heur-score"><div class="heur-score-num">8</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:80%"></div></div></div></div>
+      <div class="heur h-bad"><div><div class="heur-num">H9</div><div class="heur-title">Error recovery</div><div class="heur-text">Zero documented recovery paths. Failed query, source down, bad import — no coverage.</div></div><div class="heur-score"><div class="heur-score-num">3</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:30%"></div></div></div></div>
+      <div class="heur h-mid"><div><div class="heur-num">H10</div><div class="heur-title">Help &amp; documentation</div><div class="heur-text">Guide exists but no in-product help, tooltips, or glossary at point of need.</div></div><div class="heur-score"><div class="heur-score-num">6</div><div class="heur-score-bar"><div class="heur-score-fill" style="width:60%"></div></div></div></div>
+    </div>
+
+    <div class="heur-agg">
+      <div class="agg-num">6.4<span>/10</span></div>
+      <div><div class="agg-label">Composite score</div><div class="agg-text">Above beta threshold, clearly not GA. H3, H5, H9 below 5 — anchor the v0.2 backlog. Don't regress the strengths while fixing the weaknesses.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GAP INVENTORY -->
+<section>
+  <div class="sec-kicker">05 · Gap Inventory</div>
+  <h2 class="sec-h">13 gaps: Section 07 corrected and extended.</h2>
+  <p class="sec-lede">Every gap mapped to severity, effort, and source. One Section 07 gap — the fabricated numbering bug — was dropped. Four new gaps from heuristic eval.</p>
+
+  <div class="gap-list">
+    <div class="gap"><div class="gap-num">G01</div><div class="gap-body"><h4>No role/access matrix</h4><p>Users see screens they can't use safely; root cause of several downstream gaps.</p><div class="gap-src">Section 07 (expanded) · H1</div></div><div class="gap-tags"><span class="sev high">Blocking</span><span class="eff">M</span></div></div>
+    <div class="gap"><div class="gap-num">G02</div><div class="gap-body"><h4>CSV/XLSX import format undocumented</h4><p>Column order, escape rules, max rows — none specified. Predicted top-3 support ticket.</p><div class="gap-src">Section 07</div></div><div class="gap-tags"><span class="sev high">Blocking</span><span class="eff">S</span></div></div>
+    <div class="gap"><div class="gap-num">G03</div><div class="gap-body"><h4>Zero documented error states</h4><p>Failed connect, invalid SQL, timeout, rate limit — none covered in UI or docs.</p><div class="gap-src">Section 07 · H9</div></div><div class="gap-tags"><span class="sev high">Blocking</span><span class="eff">M</span></div></div>
+    <div class="gap"><div class="gap-num">G04</div><div class="gap-body"><h4>Glossary hidden in appendix</h4><p>"Training Pair," "Critical Instruction," "Auxiliary" — all product-specific. First-time users never find it.</p><div class="gap-src">Section 07 (location fixed)</div></div><div class="gap-tags"><span class="sev high">Blocking</span><span class="eff">S</span></div></div>
+    <div class="gap"><div class="gap-num">G05</div><div class="gap-body"><h4>Supported data sources unlisted</h4><p>Guide says "multiple types" but never names them. Evaluators can't confirm Karl works with their stack.</p><div class="gap-src">Section 07</div></div><div class="gap-tags"><span class="sev med">High</span><span class="eff">S</span></div></div>
+    <div class="gap"><div class="gap-num">G06</div><div class="gap-body"><h4>Auxiliary activation vague</h4><p>Guide says Karl "detects" domain but not how. Determines how Raj authors effective instructions.</p><div class="gap-src">Section 07 · H6</div></div><div class="gap-tags"><span class="sev med">High</span><span class="eff">M</span></div></div>
+    <div class="gap"><div class="gap-num">G07</div><div class="gap-body"><h4>Training sync timing undefined</h4><p>Does a new pair apply to the next query or after a nightly sync? Raj can't trust changes.</p><div class="gap-src">Section 07 · H1</div></div><div class="gap-tags"><span class="sev med">High</span><span class="eff">S</span></div></div>
+    <div class="gap"><div class="gap-num">G08</div><div class="gap-body"><h4>Conversation persistence unclear</h4><p>Does switching sources wipe chat? Per-user or per-tenant? Silent behavior kills trust.</p><div class="gap-src">Section 07 · H3</div></div><div class="gap-tags"><span class="sev med">High</span><span class="eff">S</span></div></div>
+    <div class="gap"><div class="gap-num">G09</div><div class="gap-body"><h4>No SQL preview before execution</h4><p>Users can't verify Karl understood them until results come back.</p><div class="gap-src">New · H2</div></div><div class="gap-tags"><span class="sev med">High</span><span class="eff">M</span></div></div>
+    <div class="gap"><div class="gap-num">G10</div><div class="gap-body"><h4>No version history on Knowledge Guide</h4><p>Guide warns changes can cause "unpredictable behavior" — but provides no rollback or diff.</p><div class="gap-src">New · H3</div></div><div class="gap-tags"><span class="sev med">High</span><span class="eff">L</span></div></div>
+    <div class="gap"><div class="gap-num">G11</div><div class="gap-body"><h4>No annotated screenshots / in-product help</h4><p>Text-only guide for a UI product. Onboarding relies entirely on reading.</p><div class="gap-src">Section 07</div></div><div class="gap-tags"><span class="sev med">Medium</span><span class="eff">M</span></div></div>
+    <div class="gap"><div class="gap-num">G12</div><div class="gap-body"><h4>Telemetry lacks drill-down &amp; export</h4><p>Three metrics, no filters, no export. Admins rebuild in Excel.</p><div class="gap-src">New · H7</div></div><div class="gap-tags"><span class="sev low">Medium</span><span class="eff">M</span></div></div>
+    <div class="gap"><div class="gap-num">G13</div><div class="gap-body"><h4>No CSV template for training import</h4><p>Related to G02 — even with format documented, a downloadable template removes ambiguity.</p><div class="gap-src">New · H5</div></div><div class="gap-tags"><span class="sev low">Low</span><span class="eff">XS</span></div></div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-lbl">Dropped from Section 07</div>
+    <p>Section 07 claimed Section 4 was used twice. It wasn't — v0.1 numbers Knowledge Guide as 05 and Telemetry as 06 correctly. Dropped rather than carrying a fabricated issue forward. The team's own audit had drifted from reality; future audits should run against the live product, not a mental model.</p>
+  </div>
+</section>
+
+<!-- PRIORITY MATRIX -->
+<section class="bg-alt">
+  <div class="inner">
+    <div class="sec-kicker">06 · Priority Matrix</div>
+    <h2 class="sec-h">Where to spend v0.2 cycles.</h2>
+    <p class="sec-lede">Severity on Y-axis, effort on X-axis. Quick wins top-right; strategic bets top-left.</p>
+
+    <div class="matrix">
+      <div class="axis-y">High Severity ← → Low Severity</div>
+      <div class="q strat">
+        <div class="q-label">Strategic bets · ship carefully</div>
+        <div class="q-title">High severity · High effort</div>
+        <div class="q-items"><div class="q-item">G01 Role gating</div><div class="q-item">G03 Error states</div><div class="q-item">G10 Version history</div></div>
+      </div>
+      <div class="q quick">
+        <div class="q-label">Quick wins · ship in v0.2</div>
+        <div class="q-title">High severity · Low effort</div>
+        <div class="q-items"><div class="q-item">G02 CSV format docs</div><div class="q-item">G04 Inline glossary</div><div class="q-item">G05 Sources list</div><div class="q-item">G07 Sync timing</div><div class="q-item">G08 Persistence behavior</div><div class="q-item">G13 CSV template</div></div>
+      </div>
+      <div class="q recon">
+        <div class="q-label">Reconsider · v0.3+</div>
+        <div class="q-title">Low severity · High effort</div>
+        <div class="q-items"><div class="q-item">G11 Annotated screenshots</div><div class="q-item">G12 Telemetry drill-down</div></div>
+      </div>
+      <div class="q fill">
+        <div class="q-label">Fill-ins · opportunistic</div>
+        <div class="q-title">Low severity · Low effort</div>
+        <div class="q-items"><div class="q-item">G06 Activation spec</div><div class="q-item">G09 SQL preview</div></div>
+      </div>
+      <div class="axis-x"><span>High Effort</span><span>Low Effort</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- IA RECOMMENDATION -->
+<section>
+  <div class="sec-kicker">07 · Information Architecture</div>
+  <h2 class="sec-h">Same five screens. Clear ownership.</h2>
+  <p class="sec-lede">No new screens. What changes is role-scoped nav, a persistent source chip, and glossary surfaced where needed.</p>
+
+  <div class="ia-grid">
+    <div class="ia-col before">
+      <div class="ia-label">v0.1 · Current</div>
+      <div class="ia-title">Flat nav, role-blind</div>
+      <div class="ia-tree">
+        <div class="node l1">Karl</div>
+        <div class="node l2">Landing / Connect</div>
+        <div class="node l2">Conversation</div>
+        <div class="node l2">Training Data <span class="flag dup">visible to all</span></div>
+        <div class="node l2">Knowledge Guide <span class="flag dup">visible to all</span></div>
+        <div class="node l3">Critical Instructions</div>
+        <div class="node l3">Auxiliary Instructions</div>
+        <div class="node l2">Telemetry <span class="flag dup">admin-only, unclear</span></div>
+        <div class="node l1">Appendix</div>
+        <div class="node l2">Glossary <span class="flag bug">hidden at end</span></div>
+      </div>
+    </div>
+    <div class="ia-col after">
+      <div class="ia-label">v0.2 · Proposed</div>
+      <div class="ia-title">Role-scoped, context-persistent</div>
+      <div class="ia-tree">
+        <div class="node l1">Karl <span class="flag new">+ source chip</span></div>
+        <div class="node l2">Home <span class="flag new">role-aware</span></div>
+        <div class="node l2">Conversation</div>
+        <div class="node l3">SQL preview toggle <span class="flag new">new</span></div>
+        <div class="node l2">Training Data <span class="flag new">power + admin</span></div>
+        <div class="node l3">Import preview <span class="flag new">new</span></div>
+        <div class="node l3">Version history <span class="flag new">new</span></div>
+        <div class="node l2">Knowledge Guide <span class="flag new">split by role</span></div>
+        <div class="node l3">Critical (admin)</div>
+        <div class="node l3">Auxiliary (power + admin)</div>
+        <div class="node l2">Telemetry <span class="flag new">admin-only, enforced</span></div>
+        <div class="node l3">Drill-down + export <span class="flag new">new</span></div>
+        <div class="node l1">In-product help</div>
+        <div class="node l2">Glossary <span class="flag new">inline tooltips</span></div>
+        <div class="node l2">Error recovery <span class="flag new">new</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERDICT -->
+<section>
+  <div class="verdict">
+    <div class="verdict-kicker">The v0.2 Recommendation</div>
+    <h2 class="verdict-h">Karl doesn't need a redesign. It needs scaffolding.</h2>
+    <p class="verdict-sub">The AI core is the product's moat. v0.2 should invest in the trust layer — role gating, error coverage, format docs, surfaces that tell users how the system thinks.</p>
+    <div class="vp-grid">
+      <div class="vp"><div class="vp-num">01</div><h4>Ship the Quick Wins</h4><p>G02, G04, G05, G07, G08, G13 — largest ticket reduction per unit of effort.</p></div>
+      <div class="vp"><div class="vp-num">02</div><h4>Scope the Strategic Bets</h4><p>Role gating (G01), error coverage (G03), version history (G10) — design sprint week 1 of v0.2.</p></div>
+      <div class="vp"><div class="vp-num">03</div><h4>Fix documentation drift</h4><p>Audits must run against the live product, not a mental model.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="foot">
+  <div class="foot-brand"><img src="logo-gradient.png" alt="Karl"> Karl · v0.2 UX Package · Deliverable 01 of 04</div>
+  <div class="foot-nav">
+    <a href="index.html" class="foot-link">Case Study</a>
+    <a href="01_ux_audit.html" class="foot-link current">Audit</a>
+    <a href="02_layouts.html" class="foot-link">Layouts</a>
+    <a href="03_prototype.html" class="foot-link">Prototype</a>
+    <a href="04_user_guide.html" class="foot-link">Guide</a>
+  </div>
+</div>
+
+</body>
+</html>

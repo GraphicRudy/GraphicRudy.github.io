@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karl v0.2 UX — Case Study | Anna Nair</title>
+<link rel="stylesheet" href="fonts.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+:root{
+  --blue:#0A1F44;--blue-light:#1E3D80;--blue-dark:#050F26;--blue-pale:#E0ECFC;
+  --cyan:#00B8D9;--cyan-light:#7FE3F0;--cyan-dark:#008CA8;--cyan-pale:#E5F7FB;
+  --orange:#FF6B35;--orange-dark:#E5501F;--orange-pale:#FFE8DE;
+  --amber:#E8A317;--amber-pale:#FFF3D6;
+  --dark:#0A1F44;--dark2:#142C5E;--dark3:#1E3D80;--dark4:#3A4A63;
+  --light:#FAFBFC;--light2:#F4F6F9;--light3:#E8EDF3;--light4:#D1DAE5;
+  --text-dark:#0A1F44;--text-mid:#3A4A63;--text-light:#6B7A91;
+  --border-light:#E8EDF3;
+  --shadow-sm:0 1px 3px rgba(10,31,68,.06);
+  --shadow-md:0 4px 12px rgba(10,31,68,.08);
+  --shadow-lg:0 12px 36px rgba(10,31,68,.1);
+}
+
+body{
+  font-family:'Degular-Regular',sans-serif;
+  background:var(--light);color:var(--text-dark);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+.material-symbols-rounded{font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;vertical-align:middle}
+
+/* ══ PROGRESS BAR ══ */
+#prog{
+  position:fixed;top:0;left:0;height:3px;z-index:1001;width:0;
+  background:linear-gradient(90deg,var(--cyan),var(--orange),var(--amber));
+  transition:width .05s linear;
+}
+
+/* ══ GLOBAL NAV (appears on every page) ══ */
+.gnav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 32px;transition:all .3s ease;
+  background:transparent;
+}
+.gnav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.gnav-logo{width:32px;height:32px;display:block;transition:opacity .3s}
+.gnav-logo.white{display:block}
+.gnav-logo.gradient{display:none}
+.gnav-wordmark{
+  font-family:'DegularDisplay-Bold',sans-serif;color:#fff;font-size:16px;
+  letter-spacing:-.01em;line-height:1;transition:color .3s;
+}
+.gnav-wordmark .sub{
+  font-family:'Degular-Regular',sans-serif;font-size:11px;
+  color:rgba(255,255,255,.5);letter-spacing:.06em;margin-top:2px;display:block;
+  text-transform:uppercase;font-weight:500;
+}
+.gnav-links{display:flex;align-items:center;gap:4px}
+.gnav-link{
+  font-family:'Degular-Medium',sans-serif;font-size:13px;
+  color:rgba(255,255,255,.6);text-decoration:none;padding:8px 14px;
+  border-radius:100px;transition:all .2s;letter-spacing:.02em;
+}
+.gnav-link:hover{color:#fff;background:rgba(255,255,255,.08)}
+.gnav-link.active{color:#fff;background:rgba(255,255,255,.1);font-family:'Degular-Bold',sans-serif}
+
+/* Scrolled state — white nav with dark text */
+.gnav.scrolled{
+  background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 1px 24px rgba(10,31,68,.06);padding:10px 32px;
+  border-bottom:1px solid rgba(10,31,68,.04);
+}
+.gnav.scrolled .gnav-logo.white{display:none}
+.gnav.scrolled .gnav-logo.gradient{display:block}
+.gnav.scrolled .gnav-wordmark{color:var(--blue)}
+.gnav.scrolled .gnav-wordmark .sub{color:var(--text-light)}
+.gnav.scrolled .gnav-link{color:var(--text-mid)}
+.gnav.scrolled .gnav-link:hover{color:var(--blue);background:var(--light2)}
+.gnav.scrolled .gnav-link.active{color:var(--blue);background:var(--light2)}
+
+/* ══ HERO ══ */
+.hero{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;min-height:100vh;padding:120px 64px 80px;
+  position:relative;overflow:hidden;background:#050F26;
+}
+.hero-bg-blob1{
+  position:absolute;top:-15%;left:-10%;width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,184,217,.28),transparent 65%);
+  pointer-events:none;filter:blur(80px);animation:blobDrift1 8s ease-in-out infinite alternate;
+}
+.hero-bg-blob2{
+  position:absolute;bottom:-20%;right:-5%;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,53,.22),transparent 65%);
+  pointer-events:none;filter:blur(80px);animation:blobDrift2 10s ease-in-out infinite alternate;
+}
+.hero-bg-blob3{
+  position:absolute;top:30%;right:20%;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(30,61,128,.4),transparent 65%);
+  pointer-events:none;filter:blur(60px);animation:blobDrift3 12s ease-in-out infinite alternate;
+}
+@keyframes blobDrift1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(60px,40px) scale(1.15)}}
+@keyframes blobDrift2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-50px,-30px) scale(1.1)}}
+@keyframes blobDrift3{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,-50px) scale(1.2)}}
+
+.hero-noise{
+  position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.35;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px 128px;
+}
+.hero-bg-dots{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+
+.hero-content{position:relative;z-index:2;max-width:900px;margin:0 auto}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Degular-Medium',sans-serif;font-size:12px;
+  color:var(--cyan);letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(0,184,217,.08);border:1px solid rgba(0,184,217,.2);
+  padding:8px 18px;border-radius:100px;margin-bottom:32px;
+  backdrop-filter:blur(12px);opacity:0;
+}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero h1{
+  font-family:'DegularDisplay-Bold',sans-serif;
+  font-size:clamp(56px,7vw,88px);line-height:1.02;letter-spacing:-.025em;
+  color:#fff;margin-bottom:24px;opacity:0;
+}
+.hero h1 .accent{
+  background:linear-gradient(135deg,var(--cyan),var(--cyan-light),#fff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero h1 .orange-accent{
+  background:linear-gradient(135deg,var(--orange),#FFB088);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-family:'Degular-Regular',sans-serif;font-size:18px;line-height:1.55;
+  color:rgba(255,255,255,.6);max-width:620px;margin:0 auto 40px;opacity:0;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;opacity:0}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:100px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan-dark));color:#fff;
+  font-family:'Degular-Medium',sans-serif;font-size:14px;letter-spacing:.02em;
+  text-decoration:none;border:none;cursor:pointer;
+  box-shadow:0 0 24px rgba(0,184,217,.3),inset 0 1px 0 rgba(255,255,255,.15);
+  transition:all .25s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(0,184,217,.5)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:100px;
+  background:rgba(255,255,255,.04);color:#fff;
+  font-family:'Degular-Medium',sans-serif;font-size:14px;letter-spacing:.02em;
+  text-decoration:none;border:1.5px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);cursor:pointer;transition:all .25s;
+}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,184,217,.06)}
+
+.hero-stats{
+  display:flex;gap:48px;margin-top:56px;opacity:0;
+  padding-top:32px;border-top:1px solid rgba(255,255,255,.08);justify-content:center;flex-wrap:wrap;
+}
+.h-stat-num{font-family:'DegularDisplay-Bold',sans-serif;font-size:40px;color:#fff;letter-spacing:-.025em;line-height:1}
+.h-stat-num.cyan{color:var(--cyan-light)}
+.h-stat-num.orange{color:var(--orange)}
+.h-stat-label{font-family:'Degular-Regular',sans-serif;font-size:12px;color:rgba(255,255,255,.45);margin-top:8px;letter-spacing:.06em;text-transform:uppercase}
+
+/* ══ SECTION WRAPPER ══ */
+.section{position:relative;max-width:1200px;margin:0 auto;padding:100px 48px}
+.sec-label{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Degular-Medium',sans-serif;font-size:11px;
+  color:var(--cyan-dark);letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;
+}
+.sec-label .material-symbols-rounded{font-size:16px;color:var(--cyan);font-variation-settings:'FILL' 1}
+h2.h2{
+  font-family:'DegularDisplay-Bold',sans-serif;
+  font-size:clamp(34px,4vw,52px);line-height:1.05;letter-spacing:-.02em;
+  color:var(--dark);margin-bottom:20px;max-width:800px;
+}
+p.body{
+  font-family:'Degular-Regular',sans-serif;font-size:17px;line-height:1.65;
+  color:var(--text-mid);margin-bottom:20px;max-width:640px;
+}
+p.body strong{font-family:'Degular-Semibold',sans-serif;color:var(--dark)}
+
+/* ══ CHALLENGE CARDS ══ */
+.challenge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.c-card{
+  background:#fff;border:1px solid var(--border-light);border-radius:20px;padding:28px;
+  box-shadow:var(--shadow-sm);transition:all .3s ease;position:relative;overflow:hidden;
+}
+.c-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--cyan-light));opacity:0;transition:opacity .3s}
+.c-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:rgba(0,184,217,.3)}
+.c-card:hover::before{opacity:1}
+.c-icon{width:44px;height:44px;border-radius:12px;background:var(--cyan-pale);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.c-icon .material-symbols-rounded{font-size:22px;color:var(--cyan-dark);font-variation-settings:'FILL' 1}
+.c-num{font-family:'Degular-Medium',sans-serif;font-size:10px;color:var(--cyan-dark);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.c-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:17px;color:var(--dark);margin-bottom:8px;line-height:1.25;letter-spacing:-.015em}
+.c-text{font-family:'Degular-Regular',sans-serif;font-size:14px;color:var(--text-mid);line-height:1.55}
+
+/* ══ METRIC INSIGHT CARDS ══ */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.insight-card{border-radius:20px;padding:32px 28px}
+.insight-card.cyan{background:linear-gradient(135deg,var(--cyan-pale),#D3F1F7)}
+.insight-card.orange{background:linear-gradient(135deg,var(--orange-pale),#FFDCC8)}
+.insight-card.blue{background:linear-gradient(135deg,var(--blue-pale),#CCDDF5)}
+.ic-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.ic-icon.cyan{background:rgba(0,184,217,.2)}
+.ic-icon.orange{background:rgba(255,107,53,.2)}
+.ic-icon.blue{background:rgba(10,31,68,.15)}
+.ic-icon .material-symbols-rounded{font-size:26px;font-variation-settings:'FILL' 1}
+.ic-icon.cyan .material-symbols-rounded{color:var(--cyan-dark)}
+.ic-icon.orange .material-symbols-rounded{color:var(--orange-dark)}
+.ic-icon.blue .material-symbols-rounded{color:var(--blue)}
+.ic-stat{font-family:'DegularDisplay-Bold',sans-serif;font-size:48px;letter-spacing:-.025em;line-height:1}
+.ic-stat.cyan{color:var(--cyan-dark)}
+.ic-stat.orange{color:var(--orange-dark)}
+.ic-stat.blue{color:var(--blue)}
+.ic-label{font-family:'Degular-Medium',sans-serif;font-size:13.5px;color:var(--text-mid);margin-top:10px;line-height:1.5}
+
+/* ══ PERSONAS ══ */
+.persona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.persona-card{
+  background:#fff;border:1px solid var(--border-light);border-radius:20px;padding:28px;
+  position:relative;overflow:hidden;transition:all .3s ease;
+}
+.persona-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.persona-card.p1::before{background:var(--cyan)}
+.persona-card.p2::before{background:var(--orange)}
+.persona-card.p3::before{background:var(--blue)}
+.persona-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.p-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DegularDisplay-Bold',sans-serif;font-size:20px;margin-bottom:14px}
+.persona-card.p1 .p-avatar{background:linear-gradient(135deg,var(--cyan),var(--cyan-dark))}
+.persona-card.p2 .p-avatar{background:linear-gradient(135deg,var(--orange),var(--orange-dark))}
+.persona-card.p3 .p-avatar{background:linear-gradient(135deg,var(--blue),var(--blue-light))}
+.p-name{font-family:'DegularDisplay-Bold',sans-serif;font-size:18px;letter-spacing:-.015em;color:var(--dark);margin-bottom:3px}
+.p-role{font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.p-quote{font-family:'Degular-Regular',sans-serif;font-size:13.5px;color:var(--text-mid);line-height:1.55;font-style:italic;padding-left:14px;border-left:2px solid var(--border-light);margin-bottom:18px}
+.p-score{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px dashed var(--border-light)}
+.p-score-label{font-family:'Degular-Medium',sans-serif;font-size:10.5px;color:var(--text-light);text-transform:uppercase;letter-spacing:.1em}
+.p-score-bar{flex:1;margin:0 10px;height:5px;background:var(--light2);border-radius:999px;overflow:hidden}
+.p-score-fill{height:100%;border-radius:999px}
+.p-score-fill.mid{background:var(--amber)} .p-score-fill.bad{background:#E5484D}
+.p-score-val{font-family:'DegularDisplay-Bold',sans-serif;font-size:14px;color:var(--dark)}
+
+/* ══ DECISIONS ACCORDION ══ */
+.dec-list{margin-top:32px;display:flex;flex-direction:column;gap:10px}
+.dec-card{
+  background:#fff;border:1.5px solid var(--border-light);border-radius:16px;overflow:hidden;
+  box-shadow:var(--shadow-sm);transition:all .25s;
+}
+.dec-card:hover{border-color:rgba(0,184,217,.3)}
+.dec-card.open{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,184,217,.08)}
+.dec-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;cursor:pointer;gap:16px}
+.dec-left{display:flex;align-items:center;gap:14px}
+.dec-icon{width:40px;height:40px;border-radius:10px;background:var(--cyan-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dec-icon .material-symbols-rounded{font-size:20px;color:var(--cyan-dark);font-variation-settings:'FILL' 1}
+.dec-num{font-family:'Degular-Medium',sans-serif;font-size:10px;color:var(--text-light);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.dec-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:16px;color:var(--dark);letter-spacing:-.015em}
+.dec-chevron{width:32px;height:32px;border-radius:50%;background:var(--light2);border:1px solid var(--border-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s}
+.dec-chevron .material-symbols-rounded{font-size:18px;color:var(--text-mid);transition:transform .3s}
+.dec-card.open .dec-chevron{background:var(--cyan);border-color:var(--cyan)}
+.dec-card.open .dec-chevron .material-symbols-rounded{color:#fff;transform:rotate(180deg)}
+.dec-body{display:grid;grid-template-columns:1fr 1fr;max-height:0;overflow:hidden;transition:max-height .4s ease}
+.dec-card.open .dec-body{max-height:300px}
+.dec-col{padding:0 24px 24px}
+.dec-col:first-child{border-right:1px solid var(--border-light)}
+.dec-col-tag{display:inline-flex;align-items:center;gap:4px;font-family:'Degular-Medium',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:10px;margin-top:16px}
+.tag-reason{background:var(--cyan-pale);color:var(--cyan-dark)}
+.tag-trade{background:var(--orange-pale);color:var(--orange-dark)}
+.dec-col-text{font-family:'Degular-Regular',sans-serif;font-size:13.5px;color:var(--text-mid);line-height:1.6}
+
+/* ══ GALLERY (deliverables) ══ */
+.gallery-section{background:var(--dark);padding:100px 0;position:relative;overflow:hidden}
+.gallery-section::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,184,217,.06) 1px,transparent 1px);background-size:28px 28px}
+.gallery-inner{max-width:1200px;margin:0 auto;padding:0 48px;position:relative;z-index:1}
+.gallery-section .sec-label{color:var(--cyan-light)}
+.gallery-section .sec-label .material-symbols-rounded{color:var(--cyan-light)}
+.gallery-section h2.h2{color:#fff}
+.gallery-section p.body{color:rgba(255,255,255,.6)}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+.g-item{
+  border-radius:20px;overflow:hidden;position:relative;
+  border:1px solid rgba(255,255,255,.08);transition:all .3s ease;
+  box-shadow:0 4px 24px rgba(0,0,0,.25);text-decoration:none;
+}
+.g-item:hover{transform:translateY(-6px);border-color:rgba(0,184,217,.35);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.g-preview{aspect-ratio:16/9;position:relative;overflow:hidden;background:#fff}
+.g-body{padding:24px 26px;background:#0F1933}
+.g-num{font-family:'Degular-Medium',sans-serif;font-size:10px;color:var(--cyan-light);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.g-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:20px;color:#fff;letter-spacing:-.015em;margin-bottom:8px}
+.g-desc{font-family:'Degular-Regular',sans-serif;font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.55;margin-bottom:14px}
+.g-arrow{display:inline-flex;align-items:center;gap:6px;color:var(--cyan);font-family:'Degular-Medium',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+
+/* Preview mocks */
+.prev-audit{background:linear-gradient(135deg,var(--blue),var(--blue-light));display:flex;align-items:center;justify-content:center;padding:24px}
+.prev-mock{width:92%;background:#fff;border-radius:8px;padding:18px;box-shadow:0 12px 32px rgba(0,0,0,.3)}
+.prev-mock-lbl{font-family:'Degular-Medium',sans-serif;font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--orange);margin-bottom:6px}
+.prev-mock-h{font-family:'DegularDisplay-Bold',sans-serif;font-size:14px;letter-spacing:-.015em;margin-bottom:12px;color:var(--dark)}
+.prev-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.prev-stat{padding:10px;background:var(--light2);border-radius:6px}
+.prev-stat-num{font-family:'DegularDisplay-Bold',sans-serif;font-size:20px;letter-spacing:-.02em}
+.prev-stat-num.red{color:#E5484D} .prev-stat-num.orange{color:var(--orange)} .prev-stat-num.blue{color:var(--blue)}
+.prev-stat-lbl{font-family:'Degular-Medium',sans-serif;font-size:8px;color:var(--text-light);margin-top:3px}
+
+.prev-wires{background:linear-gradient(135deg,var(--light3),var(--light2));padding:24px;display:flex;align-items:center;justify-content:center}
+.prev-browser{width:90%;background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.1);overflow:hidden}
+.prev-chrome{padding:8px 12px;background:var(--light);border-bottom:1px solid var(--border-light);display:flex;gap:5px}
+.prev-dot{width:7px;height:7px;border-radius:50%;background:var(--light4)}
+.prev-wire-body{padding:16px;display:grid;gap:8px}
+.prev-box{background:var(--light3);border:1px dashed var(--light4);border-radius:4px;height:14px}
+.prev-box.lg{height:50px}
+.prev-box.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;height:auto;background:transparent;border:none}
+.prev-box.grid>div{height:40px;background:var(--light3);border:1px dashed var(--light4);border-radius:4px}
+
+.prev-proto{background:var(--blue-dark);padding:18px;display:grid;grid-template-columns:46px 1fr;gap:8px}
+.pp-side{background:var(--blue);border-radius:6px;padding:10px 6px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.pp-side-dot{width:20px;height:20px;background:var(--orange);border-radius:5px}
+.pp-side-line{width:100%;height:10px;background:rgba(255,255,255,.1);border-radius:3px}
+.pp-main{background:#fff;border-radius:6px;padding:14px;overflow:hidden}
+.pp-top{display:flex;justify-content:space-between;margin-bottom:10px}
+.pp-top-t{font-family:'DegularDisplay-Bold',sans-serif;font-size:11px;color:var(--dark)}
+.pp-chip{font-family:'Degular-Medium',sans-serif;font-size:8px;padding:2px 7px;background:var(--cyan-pale);color:var(--cyan-dark);border-radius:999px}
+.pp-msg{padding:7px 10px;background:var(--light2);border-radius:8px;font-family:'Degular-Regular',sans-serif;font-size:9px;color:var(--text-mid);margin-bottom:5px}
+.pp-msg.user{background:var(--blue);color:#fff;margin-left:26%}
+.pp-tbl{margin-top:6px;border:1px solid var(--border-light);border-radius:4px;padding:5px}
+.pp-row{display:flex;justify-content:space-between;font-family:'Degular-Regular',sans-serif;font-size:8px;padding:2px 0;border-bottom:1px solid var(--border-light)}
+.pp-row:last-child{border-bottom:none}
+.pp-row b{font-family:'DegularDisplay-Bold',sans-serif;color:var(--dark)}
+
+.prev-guide{background:linear-gradient(135deg,var(--light),var(--cyan-pale));padding:20px;display:grid;grid-template-columns:78px 1fr;gap:10px}
+.pg-toc{background:var(--blue);border-radius:6px;padding:10px 8px;display:flex;flex-direction:column;gap:3px}
+.pg-toc-lbl{font-family:'Degular-Medium',sans-serif;font-size:7px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.pg-toc-link{font-family:'Degular-Regular',sans-serif;font-size:7.5px;color:rgba(255,255,255,.6);padding:2px 4px;border-radius:3px}
+.pg-toc-link.active{background:var(--blue-light);color:#fff;border-left:2px solid var(--orange);padding-left:2px;font-family:'Degular-Medium',sans-serif}
+.pg-body{background:#fff;border-radius:6px;padding:14px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.pg-num{font-family:'Degular-Medium',sans-serif;font-size:8px;padding:2px 6px;background:var(--orange);color:#fff;border-radius:999px;display:inline-block;margin-bottom:6px}
+.pg-h{font-family:'DegularDisplay-Bold',sans-serif;font-size:12px;margin-bottom:6px;color:var(--dark);letter-spacing:-.01em}
+.pg-line{height:4px;background:var(--light3);border-radius:2px;margin-bottom:3px}
+.pg-line.sm{width:60%}
+.pg-callout{background:var(--cyan-pale);padding:5px 7px;border-left:2px solid var(--cyan);border-radius:3px;margin-top:6px;font-family:'Degular-Medium',sans-serif;font-size:7.5px;color:var(--cyan-dark)}
+
+/* ══ PROTOTYPE EMBED ══ */
+.proto-section{background:var(--dark);padding:0 0 100px;position:relative;overflow:hidden}
+.proto-inner{max-width:1240px;margin:0 auto;padding:100px 48px 0;position:relative;z-index:1}
+.proto-section .sec-label{color:var(--cyan-light)}
+.proto-section .sec-label .material-symbols-rounded{color:var(--cyan-light)}
+.proto-section h2.h2{color:#fff}
+.proto-section p.body{color:rgba(255,255,255,.6)}
+.proto-frame{margin-top:40px;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08)}
+.proto-frame iframe{width:100%;height:720px;border:none;display:block;background:#fff}
+.proto-cta{text-align:center;margin-top:28px}
+
+/* ══ AI DISCLOSURE ══ */
+.ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.ai-card{padding:28px;background:#fff;border-radius:20px;border:1px solid var(--border-light);transition:all .3s ease}
+.ai-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.ai-card h4{font-family:'DegularDisplay-Bold',sans-serif;font-size:16px;letter-spacing:-.015em;margin-bottom:14px;color:var(--dark);display:flex;align-items:center;gap:8px}
+.ai-card h4 .material-symbols-rounded{color:var(--cyan-dark);font-size:20px;font-variation-settings:'FILL' 1}
+.ai-card ul{list-style:none;padding:0}
+.ai-card li{font-family:'Degular-Regular',sans-serif;font-size:13.5px;color:var(--text-mid);line-height:1.55;margin-bottom:10px;padding-left:18px;position:relative}
+.ai-card li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+.ai-card li strong{font-family:'Degular-Semibold',sans-serif;color:var(--dark)}
+
+.ai-quote{
+  margin-top:40px;padding:28px 32px;background:#fff;
+  border:2px solid var(--orange);border-radius:16px;max-width:820px;
+}
+.ai-quote-lbl{font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--orange);margin-bottom:12px}
+.ai-quote p{font-family:'Degular-Regular',sans-serif;font-size:17px;line-height:1.5;color:var(--dark);margin:0}
+.ai-quote em{font-family:'Degular-Medium',sans-serif;color:var(--cyan-dark);font-style:normal}
+
+/* ══ METRICS ══ */
+.metrics-section{background:linear-gradient(180deg,#0F1933 0%,#050F26 100%);padding:120px 0 100px;position:relative;overflow:hidden}
+.metrics-section::before{content:'';position:absolute;top:-200px;left:50%;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(0,184,217,.15),transparent 65%);transform:translateX(-50%);pointer-events:none;filter:blur(80px)}
+.metrics-inner{max-width:1200px;margin:0 auto;padding:0 48px;position:relative;z-index:1}
+.metrics-section .sec-label{color:var(--cyan-light)}
+.metrics-section .sec-label .material-symbols-rounded{color:var(--cyan-light)}
+.metrics-section h2.h2{color:#fff}
+.metrics-section p.body{color:rgba(255,255,255,.6)}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.m-card{
+  background:rgba(255,255,255,.04);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px;
+  transition:all .3s ease;
+}
+.m-card:hover{background:rgba(255,255,255,.07);border-color:rgba(0,184,217,.3);transform:translateY(-4px)}
+.m-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,184,217,.15);border:1px solid rgba(0,184,217,.25);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.m-icon .material-symbols-rounded{color:var(--cyan-light);font-size:22px;font-variation-settings:'FILL' 1}
+.m-num{font-family:'DegularDisplay-Bold',sans-serif;font-size:52px;letter-spacing:-.025em;line-height:1}
+.m-num.cyan{color:var(--cyan-light)} .m-num.orange{color:var(--orange)} .m-num.amber{color:var(--amber)}
+.m-label{font-family:'Degular-Medium',sans-serif;font-size:13px;color:rgba(255,255,255,.65);margin-top:12px;line-height:1.5}
+
+/* ══ FOOTER ══ */
+.foot{
+  background:#050F26;color:rgba(255,255,255,.5);padding:40px 48px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-family:'Degular-Regular',sans-serif;font-size:13px;
+}
+.foot-brand{display:flex;align-items:center;gap:10px;color:#fff;font-family:'DegularDisplay-Bold',sans-serif;letter-spacing:-.01em}
+.foot-brand img{width:24px;height:24px}
+
+/* ══ RESPONSIVE ══ */
+@media (max-width:980px){
+  .gnav{padding:12px 16px}
+  .gnav-links{display:none}
+  .gnav-wordmark .sub{display:none}
+  .section,.gallery-inner,.proto-inner,.metrics-inner{padding-left:24px;padding-right:24px}
+  .challenge-grid,.insight-grid,.persona-grid,.ai-grid,.metrics-grid,.gallery-grid{grid-template-columns:1fr}
+  .dec-body{grid-template-columns:1fr}
+  .dec-col:first-child{border-right:none;border-bottom:1px solid var(--border-light)}
+  .hero-stats{gap:24px}
+  .h-stat-num{font-size:32px}
+}
+
+/* ══════ CASE STUDY ENHANCEMENTS ══════ */
+
+/* ── 3D card tilt ── */
+.tilt{transform-style:preserve-3d;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.tilt .tilt-inner{transform:translateZ(30px);will-change:transform}
+
+/* ── Sticky contextual sidebar ── */
+.cs-layout{position:relative}
+.cs-sidebar{
+  position:fixed;top:80px;left:24px;z-index:50;
+  width:210px;padding:20px;border-radius:14px;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(10,31,68,.06);box-shadow:0 8px 32px rgba(10,31,68,.06);
+  opacity:0;transform:translateX(-12px);transition:opacity .3s,transform .3s;
+  pointer-events:none;
+}
+.cs-sidebar.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+.cs-sb-label{font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--cyan-dark);margin-bottom:10px}
+.cs-sb-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:15px;color:var(--blue);letter-spacing:-.015em;line-height:1.2;margin-bottom:10px}
+.cs-sb-ctx{font-size:11.5px;color:var(--text-mid);line-height:1.5;margin-bottom:14px}
+.cs-sb-nav{display:flex;flex-direction:column;gap:3px}
+.cs-sb-item{font-family:'Degular-Medium',sans-serif;font-size:11.5px;color:var(--text-light);text-decoration:none;padding:5px 9px;border-radius:6px;transition:all .15s;display:flex;align-items:center;gap:8px}
+.cs-sb-item:hover{background:var(--light2);color:var(--blue)}
+.cs-sb-item.active{background:var(--blue);color:#fff;font-family:'Degular-Bold',sans-serif}
+.cs-sb-item .dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.5}
+@media(max-width:1280px){.cs-sidebar{display:none}}
+
+/* ── Before/After slider ── */
+.ba-section{padding:80px 48px;max-width:1200px;margin:0 auto}
+.ba-wrap{position:relative;max-width:1040px;margin:40px auto 0;border-radius:16px;overflow:hidden;box-shadow:0 24px 64px rgba(10,31,68,.12);cursor:ew-resize;user-select:none}
+.ba-panel{position:relative;display:block;width:100%;aspect-ratio:16/9;background:#0A1F44}
+.ba-panel img,.ba-panel .ba-mock{display:block;width:100%;height:100%;object-fit:cover}
+.ba-after{position:absolute;inset:0;clip-path:inset(0 0 0 50%);transition:clip-path .05s linear}
+.ba-mock{display:flex;flex-direction:column;gap:18px;padding:44px;color:#fff;font-family:'Degular-Regular',sans-serif}
+.ba-mock.before{background:linear-gradient(135deg,#16223D 0%,#1E3657 100%);justify-content:center}
+.ba-mock.after{background:linear-gradient(135deg,#0A1F44 0%,#1E3D80 100%);justify-content:center}
+.ba-mock-chrome{display:flex;gap:6px;margin-bottom:10px}
+.ba-mock-chrome span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)}
+.ba-mock-nav{display:flex;gap:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px;color:rgba(255,255,255,.6);font-family:'Degular-Medium',sans-serif}
+.ba-mock-nav .active{color:#fff;font-family:'Degular-Bold',sans-serif}
+.ba-mock-nav .locked{opacity:.4}
+.ba-mock.before .ba-mock-nav .locked::after{content:''}
+.ba-mock.after .ba-mock-nav .locked::after{content:' 🔒'}
+.ba-mock-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(0,184,217,.14);border:1px solid rgba(0,184,217,.3);color:var(--cyan-light);font-size:11px;font-family:'Degular-Medium',sans-serif;width:fit-content}
+.ba-mock-chip::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan)}
+.ba-mock-row{display:flex;gap:10px;align-items:center}
+.ba-mock-bar{height:9px;border-radius:3px;background:rgba(255,255,255,.1)}
+.ba-mock-bar.w80{width:80%} .ba-mock-bar.w60{width:60%} .ba-mock-bar.w50{width:50%} .ba-mock-bar.w40{width:40%}
+.ba-mock-issue{color:#FF9B9E;font-size:12.5px;font-family:'Degular-Medium',sans-serif;display:flex;align-items:center;gap:8px}
+.ba-mock-issue::before{content:'';width:6px;height:6px;border-radius:50%;background:#FF6B6B}
+.ba-mock-fix{color:var(--cyan-light);font-size:12.5px;font-family:'Degular-Medium',sans-serif;display:flex;align-items:center;gap:8px}
+.ba-mock-fix::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+.ba-handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;z-index:3;box-shadow:0 0 0 1px rgba(10,31,68,.3),0 0 24px rgba(0,184,217,.4);transition:left .05s linear}
+.ba-handle::before{content:'';position:absolute;top:50%;left:50%;width:42px;height:42px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(10,31,68,.3);transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center}
+.ba-handle::after{content:'⇔';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:16px;color:var(--blue);font-weight:700;z-index:1}
+.ba-label{position:absolute;top:16px;padding:6px 12px;border-radius:999px;font-family:'Degular-Bold',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.1em;z-index:2;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ba-label.before{left:16px;background:rgba(229,72,77,.85);color:#fff}
+.ba-label.after{right:16px;background:rgba(0,184,217,.85);color:#fff}
+
+/* ── Horizontal scroll timeline ── */
+.timeline-section{padding:80px 0;background:linear-gradient(180deg,var(--light) 0%,var(--light2) 100%);overflow:hidden}
+.timeline-intro{max-width:1200px;margin:0 auto 40px;padding:0 48px}
+.timeline-pin{height:180vh;position:relative}
+.timeline-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.timeline-track{display:flex;gap:32px;padding:0 12vw;will-change:transform}
+.tl-step{flex-shrink:0;width:440px;background:#fff;border-radius:20px;padding:32px;box-shadow:0 12px 40px rgba(10,31,68,.08);border:1px solid var(--border-light);position:relative;overflow:hidden}
+.tl-step::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:20px 20px 0 0}
+.tl-step:nth-child(1)::before{background:var(--cyan)} .tl-step:nth-child(2)::before{background:var(--orange)}
+.tl-step:nth-child(3)::before{background:var(--amber)} .tl-step:nth-child(4)::before{background:var(--cyan-dark)}
+.tl-step:nth-child(5)::before{background:var(--orange-dark)} .tl-step:nth-child(6)::before{background:var(--blue)}
+.tl-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-light);font-weight:700;letter-spacing:.06em;margin-bottom:8px}
+.tl-step h3{font-family:'DegularDisplay-Bold',sans-serif;font-size:26px;letter-spacing:-.025em;color:var(--blue);margin-bottom:12px;line-height:1.1}
+.tl-step p{font-size:14.5px;color:var(--text-mid);line-height:1.6;margin-bottom:20px}
+.tl-meta{display:flex;flex-direction:column;gap:10px;padding-top:20px;border-top:1px solid var(--border-light)}
+.tl-meta-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.tl-meta-lbl{font-family:'Degular-Medium',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--text-light)}
+.tl-meta-val{font-family:'Degular-Medium',sans-serif;color:var(--blue)}
+.tl-chips{display:flex;flex-wrap:wrap;gap:6px}
+.tl-chip{font-size:10.5px;padding:3px 8px;background:var(--light2);color:var(--text-mid);border-radius:999px;font-family:'Degular-Medium',sans-serif}
+.tl-progress{max-width:1200px;margin:40px auto 0;padding:0 48px;display:flex;align-items:center;gap:12px}
+.tl-prog-bar{flex:1;height:2px;background:var(--border-light);border-radius:999px;overflow:hidden}
+.tl-prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--orange));width:0%;transition:width .1s linear}
+.tl-prog-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-light);font-weight:600;min-width:60px;text-align:right}
+
+/* ── Gallery filter tabs ── */
+.gallery-filter{display:flex;gap:4px;justify-content:center;margin:20px 0 28px;padding:5px;background:var(--light2);border-radius:100px;width:fit-content;margin-left:auto;margin-right:auto;border:1px solid var(--border-light)}
+.gf-btn{font-family:'Degular-Medium',sans-serif;font-size:13px;padding:8px 18px;border-radius:100px;border:none;background:transparent;color:var(--text-mid);cursor:pointer;transition:all .2s;letter-spacing:-.005em}
+.gf-btn:hover{color:var(--blue)}
+.gf-btn.active{background:#fff;color:var(--blue);font-family:'Degular-Bold',sans-serif;box-shadow:0 2px 8px rgba(10,31,68,.08)}
+.g-item{transition:all .35s cubic-bezier(.2,.8,.2,1);opacity:1}
+.g-item.hidden{opacity:0;transform:scale(.95);pointer-events:none;position:absolute;visibility:hidden}
+
+/* ── Lightbox ── */
+.lightbox{position:fixed;inset:0;background:rgba(10,31,68,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:40px}
+.lightbox.open{opacity:1;pointer-events:auto}
+.lightbox-content{max-width:1100px;width:100%;background:#fff;border-radius:16px;overflow:hidden;transform:scale(.94);transition:transform .35s cubic-bezier(.2,.8,.2,1);max-height:90vh;display:flex;flex-direction:column}
+.lightbox.open .lightbox-content{transform:scale(1)}
+.lightbox-head{padding:20px 28px;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;background:var(--light)}
+.lightbox-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:20px;color:var(--blue);letter-spacing:-.015em}
+.lightbox-close{width:36px;height:36px;border-radius:50%;background:var(--light2);border:none;color:var(--text-mid);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.lightbox-close:hover{background:var(--blue);color:#fff}
+.lightbox-body{padding:32px;overflow-y:auto;flex:1}
+.lightbox-body p{font-size:15px;color:var(--text-mid);line-height:1.6;margin-bottom:14px}
+.lightbox-body h4{font-family:'DegularDisplay-Bold',sans-serif;font-size:16px;color:var(--blue);margin:20px 0 8px;letter-spacing:-.01em}
+.lightbox-body ul{margin:0 0 14px 20px;font-size:14px;color:var(--text-mid)}
+.lightbox-body li{margin-bottom:5px}
+.lightbox-cta{display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:10px 18px;background:var(--blue);color:#fff;text-decoration:none;border-radius:100px;font-family:'Degular-Bold',sans-serif;font-size:13px;transition:all .2s}
+.lightbox-cta:hover{background:var(--orange);transform:translateX(3px)}
+
+@media(max-width:768px){
+  .ba-section,.timeline-intro,.tl-progress{padding-left:24px;padding-right:24px}
+  .tl-step{width:300px;padding:22px}
+  .timeline-pin{height:100vh}
+  .timeline-sticky{position:relative;height:auto;padding:20px 0;overflow-x:auto}
+  .timeline-track{transform:none !important}
+  .gallery-filter{flex-wrap:wrap;border-radius:12px}
+  .lightbox{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<!-- GLOBAL NAV -->
+<nav class="gnav" id="gnav">
+  <a href="index.html" class="gnav-brand">
+    <img src="logo-white.png" class="gnav-logo white" alt="Karl">
+    <img src="logo-gradient.png" class="gnav-logo gradient" alt="Karl">
+    <div class="gnav-wordmark">Karl<span class="sub">v0.2 UX Package</span></div>
+  </a>
+  <div class="gnav-links">
+    <a href="index.html" class="gnav-link active">Case Study</a>
+    <a href="01_ux_audit.html" class="gnav-link">Audit</a>
+    <a href="02_layouts.html" class="gnav-link">Layouts</a>
+    <a href="03_prototype.html" class="gnav-link">Prototype</a>
+    <a href="04_user_guide.html" class="gnav-link">Guide</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="s-hero">
+  <div class="hero-bg-dots"></div>
+  <div class="hero-bg-blob1"></div>
+  <div class="hero-bg-blob2"></div>
+  <div class="hero-bg-blob3"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span class="eyebrow-dot"></span>Case Study · AI Product UX · 2026</div>
+    <h1>Designing <span class="accent">the scaffolding</span><br>around an <span class="orange-accent">AI agent</span></h1>
+    <p class="hero-sub">A v0.2 UX package for Karl — Kanerika's NL-to-SQL analytics agent. The AI worked. Everything around it didn't.</p>
+    <div class="hero-actions">
+      <a href="#s-work" class="btn-primary"><span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 1">folder_open</span>View Deliverables</a>
+      <a href="#s-challenge" class="btn-outline"><span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 1">arrow_downward</span>Read Case Study</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="h-stat-num">13</div><div class="h-stat-label">Gaps Found</div></div>
+      <div><div class="h-stat-num cyan">6.4<span style="font-size:22px;opacity:.5">/10</span></div><div class="h-stat-label">Heuristic Score</div></div>
+      <div><div class="h-stat-num orange">3</div><div class="h-stat-label">Personas</div></div>
+      <div><div class="h-stat-num">6</div><div class="h-stat-label">Screens</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STICKY CONTEXTUAL SIDEBAR -->
+<aside class="cs-sidebar" id="cs-sidebar">
+  <div class="cs-sb-label">Now Reading</div>
+  <div class="cs-sb-title" id="cs-sb-title">The Challenge</div>
+  <div class="cs-sb-ctx" id="cs-sb-ctx">Where Karl v0.1 breaks down — four structural issues in flat nav and docs.</div>
+  <div class="cs-sb-nav">
+    <a href="#s-challenge" class="cs-sb-item" data-ctx="Where Karl v0.1 breaks down — four structural issues in flat nav and docs."><span class="dot"></span>The Challenge</a>
+    <a href="#s-research" class="cs-sb-item" data-ctx="Three personas grounded in the guide's role split + inferred power user."><span class="dot"></span>Research</a>
+    <a href="#s-decisions" class="cs-sb-item" data-ctx="Four decisions that shaped v0.2 — each traceable to a specific gap."><span class="dot"></span>Decisions</a>
+    <a href="#s-process" class="cs-sb-item" data-ctx="Six-step process from audit to prototype. Scroll the track to see each."><span class="dot"></span>Process</a>
+    <a href="#s-compare" class="cs-sb-item" data-ctx="v0.1 → v0.2 side by side. Drag the handle to compare."><span class="dot"></span>Before / After</a>
+    <a href="#s-work" class="cs-sb-item" data-ctx="Four deliverables — filter by type or open each to explore."><span class="dot"></span>The Work</a>
+    <a href="#s-ai" class="cs-sb-item" data-ctx="Honest disclosure of what AI touched and what didn't."><span class="dot"></span>AI Disclosure</a>
+    <a href="#s-results" class="cs-sb-item" data-ctx="What the v0.2 package delivers — the scoreboard."><span class="dot"></span>Results</a>
+  </div>
+</aside>
+
+<!-- CHALLENGE -->
+<section class="section" id="s-challenge">
+  <div class="sec-label"><span class="material-symbols-rounded">flag</span>The Challenge</div>
+  <h2 class="h2">A capable AI. Sharp edges everywhere around it.</h2>
+  <p class="body">Karl's NL-to-SQL core works. But v0.1 shipped with zero documented error states, no role gating, and vague mechanics users need to trust the system. For a product promising "no SQL required," hidden complexity broke the promise.</p>
+
+  <div class="challenge-grid">
+    <div class="c-card">
+      <div class="c-icon"><span class="material-symbols-rounded">visibility_off</span></div>
+      <div class="c-num">01</div>
+      <div class="c-title">Role-blind navigation</div>
+      <div class="c-text">Business users saw Training Data in the nav. One bad pair degrades Karl for the whole team.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-icon"><span class="material-symbols-rounded">error</span></div>
+      <div class="c-num">02</div>
+      <div class="c-title">Zero error coverage</div>
+      <div class="c-text">Failed connections, bad imports, timeouts — the product has them, docs and UI don't explain them.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-icon"><span class="material-symbols-rounded">help</span></div>
+      <div class="c-num">03</div>
+      <div class="c-title">Vague AI mechanics</div>
+      <div class="c-text">CSV format undefined. Training sync timing unclear. Aux activation "detects" — but how?</div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="section" id="s-research" style="padding-top:40px">
+  <div class="sec-label"><span class="material-symbols-rounded">insights</span>Research &amp; Diagnosis</div>
+  <h2 class="h2">Three personas. One flat nav. <span style="color:var(--cyan-dark)">Collision.</span></h2>
+  <p class="body">I ran Nielsen's heuristics against the live product, journey-mapped three personas from the v0.1 role split, and prioritized every gap on severity × effort.</p>
+
+  <div class="insight-grid">
+    <div class="insight-card cyan">
+      <div class="ic-icon cyan"><span class="material-symbols-rounded">bug_report</span></div>
+      <div class="ic-stat cyan">13</div>
+      <div class="ic-label">Usability gaps — 10 from the team's own audit (corrected) + 4 from heuristic eval</div>
+    </div>
+    <div class="insight-card orange">
+      <div class="ic-icon orange"><span class="material-symbols-rounded">speed</span></div>
+      <div class="ic-stat orange">6.4<span style="font-size:24px;opacity:.5">/10</span></div>
+      <div class="ic-label">Heuristic score. Error prevention, recovery, and user control below 5.</div>
+    </div>
+    <div class="insight-card blue">
+      <div class="ic-icon blue"><span class="material-symbols-rounded">priority_high</span></div>
+      <div class="ic-stat blue">4</div>
+      <div class="ic-label">Blocking gaps for new-user adoption. The rest sequence across v0.2–v0.3.</div>
+    </div>
+  </div>
+
+  <div class="persona-grid" style="margin-top:40px">
+    <div class="persona-card p1">
+      <div class="p-avatar">P</div>
+      <div class="p-name">Priya Nair</div>
+      <div class="p-role">Business User · Finance</div>
+      <div class="p-quote">"I need to answer the VP's questions without pinging data team. Why am I seeing a Training Data screen?"</div>
+      <div class="p-score">
+        <div class="p-score-label">v0.1 fit</div>
+        <div class="p-score-bar"><div class="p-score-fill mid" style="width:60%"></div></div>
+        <div class="p-score-val">6/10</div>
+      </div>
+    </div>
+    <div class="persona-card p2">
+      <div class="p-avatar">R</div>
+      <div class="p-name">Raj Srinivasan</div>
+      <div class="p-role">Power User · Analyst</div>
+      <div class="p-quote">"I imported 200 training pairs. Import says 'success' but no preview. Is it synced? Is it broken?"</div>
+      <div class="p-score">
+        <div class="p-score-label">v0.1 fit</div>
+        <div class="p-score-bar"><div class="p-score-fill bad" style="width:40%"></div></div>
+        <div class="p-score-val">4/10</div>
+      </div>
+    </div>
+    <div class="persona-card p3">
+      <div class="p-avatar">M</div>
+      <div class="p-name">Meera Kapoor</div>
+      <div class="p-role">Administrator · IT</div>
+      <div class="p-quote">"Three charts, no filters, no export. I screenshot the dashboard and rebuild my CIO's deck in Excel."</div>
+      <div class="p-score">
+        <div class="p-score-label">v0.1 fit</div>
+        <div class="p-score-bar"><div class="p-score-fill mid" style="width:55%"></div></div>
+        <div class="p-score-val">5.5/10</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DECISIONS -->
+<section class="section" id="s-decisions" style="padding-top:40px">
+  <div class="sec-label"><span class="material-symbols-rounded">fork_right</span>Key Decisions</div>
+  <h2 class="h2">Four calls I'd defend in a design review.</h2>
+  <p class="body">Trade-offs, not polished outputs. These shaped v0.2.</p>
+
+  <div class="dec-list">
+    <div class="dec-card open">
+      <div class="dec-header">
+        <div class="dec-left">
+          <div class="dec-icon"><span class="material-symbols-rounded">admin_panel_settings</span></div>
+          <div>
+            <div class="dec-num">DEC / 01</div>
+            <div class="dec-title">Role-gate the Knowledge Guide into two tiers</div>
+          </div>
+        </div>
+        <div class="dec-chevron"><span class="material-symbols-rounded">expand_more</span></div>
+      </div>
+      <div class="dec-body">
+        <div class="dec-col">
+          <div class="dec-col-tag tag-reason"><span class="material-symbols-rounded" style="font-size:12px">lightbulb</span>Reasoning</div>
+          <div class="dec-col-text">v0.1 had Critical and Auxiliary Instructions in one space. I split them: Critical stays admin-only; Auxiliary opens to Power Users so they author domain rules without an admin bottleneck.</div>
+        </div>
+        <div class="dec-col">
+          <div class="dec-col-tag tag-trade"><span class="material-symbols-rounded" style="font-size:12px">balance</span>Trade-off</div>
+          <div class="dec-col-text">Two tiers is more complex than one. I accepted it because admin-only bottleneck on everything would kill Raj's workflow.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dec-card">
+      <div class="dec-header">
+        <div class="dec-left">
+          <div class="dec-icon"><span class="material-symbols-rounded">memory</span></div>
+          <div>
+            <div class="dec-num">DEC / 02</div>
+            <div class="dec-title">Define Auxiliary activation as tags + classifier + manual</div>
+          </div>
+        </div>
+        <div class="dec-chevron"><span class="material-symbols-rounded">expand_more</span></div>
+      </div>
+      <div class="dec-body">
+        <div class="dec-col">
+          <div class="dec-col-tag tag-reason"><span class="material-symbols-rounded" style="font-size:12px">lightbulb</span>Reasoning</div>
+          <div class="dec-col-text">v0.1 said Karl "detects" domain without saying how. I proposed three layers: domain tags first, LLM classifier as fallback, manual session override as escape hatch.</div>
+        </div>
+        <div class="dec-col">
+          <div class="dec-col-tag tag-trade"><span class="material-symbols-rounded" style="font-size:12px">balance</span>Trade-off</div>
+          <div class="dec-col-text">This is a product decision, not just a doc decision. If engineering has different intent, guide and prototype need rework. Flagged instead of silently committing.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dec-card">
+      <div class="dec-header">
+        <div class="dec-left">
+          <div class="dec-icon"><span class="material-symbols-rounded">delete</span></div>
+          <div>
+            <div class="dec-num">DEC / 03</div>
+            <div class="dec-title">Drop the fabricated "section numbering bug"</div>
+          </div>
+        </div>
+        <div class="dec-chevron"><span class="material-symbols-rounded">expand_more</span></div>
+      </div>
+      <div class="dec-body">
+        <div class="dec-col">
+          <div class="dec-col-tag tag-reason"><span class="material-symbols-rounded" style="font-size:12px">lightbulb</span>Reasoning</div>
+          <div class="dec-col-text">v0.1 claimed Section 4 was used twice. It wasn't. Dropped rather than carrying a fabricated issue. The team's own audit had drifted from reality.</div>
+        </div>
+        <div class="dec-col">
+          <div class="dec-col-tag tag-trade"><span class="material-symbols-rounded" style="font-size:12px">balance</span>Trade-off</div>
+          <div class="dec-col-text">My gap count no longer matches internal reference. Chose honesty over continuity. Future audits run against the live product, not a mental model.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dec-card">
+      <div class="dec-header">
+        <div class="dec-left">
+          <div class="dec-icon"><span class="material-symbols-rounded">label</span></div>
+          <div>
+            <div class="dec-num">DEC / 04</div>
+            <div class="dec-title">Don't call this "Agent Experience Design"</div>
+          </div>
+        </div>
+        <div class="dec-chevron"><span class="material-symbols-rounded">expand_more</span></div>
+      </div>
+      <div class="dec-body">
+        <div class="dec-col">
+          <div class="dec-col-tag tag-reason"><span class="material-symbols-rounded" style="font-size:12px">lightbulb</span>Reasoning</div>
+          <div class="dec-col-text">Useful but AX-adjacent. Didn't define autonomy, confidence calibration, reasoning traces, or correction loops — the core of real AX. Called it Product UX for an AI product.</div>
+        </div>
+        <div class="dec-col">
+          <div class="dec-col-tag tag-trade"><span class="material-symbols-rounded" style="font-size:12px">balance</span>Trade-off</div>
+          <div class="dec-col-text">AX is the hotter label and attracts more attention. Traded attention for credibility. A future Agent Behavior Spec would earn the label honestly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS — horizontal scroll timeline -->
+<section class="timeline-section" id="s-process">
+  <div class="timeline-intro">
+    <div class="sec-label"><span class="material-symbols-rounded">timeline</span>The Process</div>
+    <h2 class="h2">Six steps. Two hours from brief to package.</h2>
+    <p class="body">Every step scoped to a specific output. Scroll down to advance the track — each card is a stage with duration, method, and artifact.</p>
+  </div>
+  <div class="timeline-pin" id="tl-pin">
+    <div class="timeline-sticky">
+      <div class="timeline-track" id="tl-track">
+        <div class="tl-step"><div class="tl-num">01 · AUDIT</div><h3>Read v0.1 against the product.</h3><p>Side-by-side read of the v0.1 guide against the live product. Flagged the fabricated numbering bug in Section 07 and dropped it from the audit.</p><div class="tl-meta"><div class="tl-meta-row"><span class="tl-meta-lbl">Duration</span><span class="tl-meta-val">20 min</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Method</span><span class="tl-meta-val">Doc + product compare</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Output</span><span class="tl-meta-val">Gap inventory</span></div></div></div>
+        <div class="tl-step"><div class="tl-num">02 · PERSONAS</div><h3>Map the user types the doc implies.</h3><p>Three personas grounded in v0.1's role split, plus a power user inferred from the training-data workflow.</p><div class="tl-meta"><div class="tl-meta-row"><span class="tl-meta-lbl">Duration</span><span class="tl-meta-val">15 min</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Output</span><span class="tl-meta-val">3 personas + JTBDs</span></div><div class="tl-chips" style="margin-top:6px"><span class="tl-chip">Priya · User</span><span class="tl-chip">Raj · Power</span><span class="tl-chip">Meera · Admin</span></div></div></div>
+        <div class="tl-step"><div class="tl-num">03 · HEURISTICS</div><h3>Score against Nielsen's 10.</h3><p>Ten heuristics scored per screen. Composite 6.4/10. H3, H5, H9 flagged as below-threshold — the v0.2 backlog anchor.</p><div class="tl-meta"><div class="tl-meta-row"><span class="tl-meta-lbl">Duration</span><span class="tl-meta-val">20 min</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Method</span><span class="tl-meta-val">Nielsen heuristic eval</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Output</span><span class="tl-meta-val">Composite + per-heuristic score</span></div></div></div>
+        <div class="tl-step"><div class="tl-num">04 · LAYOUTS</div><h3>Wireframe six screens in grayscale.</h3><p>Deliberate grayscale so the structure argument is visible without visual polish distracting. Every layout annotated with pin numbers mapped to gaps.</p><div class="tl-meta"><div class="tl-meta-row"><span class="tl-meta-lbl">Duration</span><span class="tl-meta-val">30 min</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Output</span><span class="tl-meta-val">6 annotated layouts</span></div></div></div>
+        <div class="tl-step"><div class="tl-num">05 · PROTOTYPE</div><h3>Build it clickable.</h3><p>Single HTML file. Role switcher enforces access. SQL toggle works. Chat responds. Demo-ready, no Figma handoff needed.</p><div class="tl-meta"><div class="tl-meta-row"><span class="tl-meta-lbl">Duration</span><span class="tl-meta-val">35 min</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Method</span><span class="tl-meta-val">Vanilla HTML + JS</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Output</span><span class="tl-meta-val">6-screen interactive demo</span></div></div></div>
+        <div class="tl-step"><div class="tl-num">06 · DOCS</div><h3>Rewrite the guide as docs-as-UX.</h3><p>Role matrix. 12 sources named. 8 error codes with recovery paths. CSV spec. Glossary at point of use, not hidden in an appendix.</p><div class="tl-meta"><div class="tl-meta-row"><span class="tl-meta-lbl">Duration</span><span class="tl-meta-val">20 min</span></div><div class="tl-meta-row"><span class="tl-meta-lbl">Output</span><span class="tl-meta-val">12-chapter guide</span></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tl-progress">
+    <span class="tl-prog-label" id="tl-prog-label">Step 1 / 6</span>
+    <div class="tl-prog-bar"><div class="tl-prog-fill" id="tl-prog-fill"></div></div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section class="ba-section" id="s-compare">
+  <div class="sec-label"><span class="material-symbols-rounded">compare</span>v0.1 vs v0.2</div>
+  <h2 class="h2">Drag the handle. Watch what changed.</h2>
+  <p class="body">Both panels are the Conversation screen. Left is v0.1 — flat nav, no source chip, no SQL preview. Right is v0.2 — role-gated nav, persistent source chip, confidence signal, SQL toggle.</p>
+  <div class="ba-wrap" id="ba-wrap">
+    <div class="ba-panel ba-before">
+      <div class="ba-mock before">
+        <div class="ba-mock-chrome"><span></span><span></span><span></span></div>
+        <div class="ba-mock-nav">
+          <span class="active">Home</span><span>Conversation</span><span>Training</span><span>Knowledge</span><span>Telemetry</span>
+        </div>
+        <div class="ba-mock-issue">Flat nav · all users see all screens</div>
+        <div class="ba-mock-issue">No source chip · silent context switching</div>
+        <div class="ba-mock-row"><div class="ba-mock-bar w80" style="background:rgba(255,107,53,.3)"></div></div>
+        <div class="ba-mock-row"><div class="ba-mock-bar w60" style="background:rgba(255,255,255,.15)"></div></div>
+        <div class="ba-mock-row"><div class="ba-mock-bar w50" style="background:rgba(255,255,255,.12)"></div></div>
+        <div class="ba-mock-issue">No SQL preview · can't verify interpretation</div>
+        <div class="ba-mock-issue">No confidence signal · trust the black box</div>
+      </div>
+    </div>
+    <div class="ba-panel ba-after">
+      <div class="ba-mock after">
+        <div class="ba-mock-chrome"><span></span><span></span><span></span></div>
+        <div class="ba-mock-nav">
+          <span>Home</span><span class="active">Conversation</span><span>Training</span><span>Knowledge</span><span class="locked">Telemetry</span>
+        </div>
+        <div class="ba-mock-chip">sales_warehouse · persistent chip</div>
+        <div class="ba-mock-fix">Role-gated · Telemetry locked for non-admins</div>
+        <div class="ba-mock-row"><div class="ba-mock-bar w80" style="background:rgba(0,184,217,.35)"></div></div>
+        <div class="ba-mock-row"><div class="ba-mock-bar w60" style="background:rgba(255,255,255,.15)"></div></div>
+        <div class="ba-mock-row"><div class="ba-mock-bar w50" style="background:rgba(255,255,255,.12)"></div></div>
+        <div class="ba-mock-fix">SQL toggle · verify every query</div>
+        <div class="ba-mock-fix">Confidence badge · High / Medium / Low</div>
+      </div>
+    </div>
+    <div class="ba-label before">Before · v0.1</div>
+    <div class="ba-label after">After · v0.2</div>
+    <div class="ba-handle" id="ba-handle"></div>
+  </div>
+</section>
+
+<!-- WORK / GALLERY -->
+<section class="gallery-section" id="s-work">
+  <div class="gallery-inner">
+    <div class="sec-label"><span class="material-symbols-rounded">collections</span>The Work</div>
+    <h2 class="h2">Four deliverables. Click to open.</h2>
+    <p class="body">Prototype is the money shot — flip the role switcher in the top chrome to watch access change.</p>
+
+    <div class="gallery-filter" role="tablist">
+      <button class="gf-btn active" data-filter="all">All · 4</button>
+      <button class="gf-btn" data-filter="strategy">Strategy · 1</button>
+      <button class="gf-btn" data-filter="design">Design · 2</button>
+      <button class="gf-btn" data-filter="docs">Docs · 1</button>
+    </div>
+
+    <div class="gallery-grid">
+      <a href="01_ux_audit.html" class="g-item tilt" data-category="strategy" data-lb-title="01 · UX Audit" data-lb-content="&lt;p&gt;A v0.1 diagnosis grounded in three personas — Business User, Power User, Administrator — and scored against Nielsen's 10 heuristics. Composite score 6.4 / 10.&lt;/p&gt;&lt;h4&gt;What's inside&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;13 gaps inventoried with severity &amp;times; effort priority&lt;/li&gt;&lt;li&gt;Role &amp;times; screen access matrix — the biggest v0.1 gap&lt;/li&gt;&lt;li&gt;Before / after IA trees&lt;/li&gt;&lt;li&gt;Dropped one fabricated Section 07 bug — audit must run against the live product, not a mental model&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Best for&lt;/h4&gt;&lt;p&gt;Stakeholders who need to understand why v0.2 scope is what it is, and product managers prioritizing the backlog.&lt;/p&gt;" data-lb-href="01_ux_audit.html">
+        <div class="g-preview prev-audit">
+          <div class="prev-mock">
+            <div class="prev-mock-lbl">UX Audit · Karl v0.1</div>
+            <div class="prev-mock-h">The scaffolding doesn't work.</div>
+            <div class="prev-stats">
+              <div class="prev-stat"><div class="prev-stat-num blue">13</div><div class="prev-stat-lbl">GAPS</div></div>
+              <div class="prev-stat"><div class="prev-stat-num red">4</div><div class="prev-stat-lbl">BLOCKING</div></div>
+              <div class="prev-stat"><div class="prev-stat-num orange">6.4</div><div class="prev-stat-lbl">SCORE</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="g-body">
+          <div class="g-num">01 · UX Audit</div>
+          <div class="g-title">The diagnosis</div>
+          <div class="g-desc">Three personas scored. Heuristics applied. 13 gaps prioritized on severity × effort.</div>
+          <div class="g-arrow">Open <span class="material-symbols-rounded" style="font-size:14px">arrow_forward</span></div>
+        </div>
+      </a>
+
+      <a href="02_layouts.html" class="g-item tilt" data-category="design" data-lb-title="02 · Layouts" data-lb-content="&lt;p&gt;Six screens wireframed in deliberate grayscale — Home, Conversation, Training, Knowledge Guide, Telemetry, and a standard Error recovery pattern.&lt;/p&gt;&lt;h4&gt;Why grayscale&lt;/h4&gt;&lt;p&gt;Structure argument first. Polish last. Grayscale wireframes force stakeholder reviews to stay about flow and hierarchy, not color choices.&lt;/p&gt;&lt;h4&gt;What's annotated&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Numbered pins on every layout mapped to specific gaps&lt;/li&gt;&lt;li&gt;Role chips indicating who sees each screen&lt;/li&gt;&lt;li&gt;Change-from-v0.1 notes in each layout header&lt;/li&gt;&lt;/ul&gt;" data-lb-href="02_layouts.html">
+        <div class="g-preview prev-wires">
+          <div class="prev-browser">
+            <div class="prev-chrome"><div class="prev-dot"></div><div class="prev-dot"></div><div class="prev-dot"></div></div>
+            <div class="prev-wire-body">
+              <div class="prev-box"></div>
+              <div class="prev-box lg"></div>
+              <div class="prev-box grid"><div></div><div></div><div></div></div>
+              <div class="prev-box"></div>
+            </div>
+          </div>
+        </div>
+        <div class="g-body">
+          <div class="g-num">02 · Layouts</div>
+          <div class="g-title">Structure first</div>
+          <div class="g-desc">Six screens in grayscale — Home, Conversation, Training, Knowledge, Telemetry, Error.</div>
+          <div class="g-arrow">Open <span class="material-symbols-rounded" style="font-size:14px">arrow_forward</span></div>
+        </div>
+      </a>
+
+      <a href="03_prototype.html" class="g-item tilt" data-category="design" data-lb-title="03 · Interactive Prototype" data-lb-content="&lt;p&gt;Six screens. Three roles. Real interactions. Single HTML file. Role switcher at the top of the prototype chrome enforces access — flip it and watch Telemetry vanish for non-admins.&lt;/p&gt;&lt;h4&gt;What works&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Role switcher gates nav and screens live&lt;/li&gt;&lt;li&gt;SQL toggle reveals generated SQL on every response&lt;/li&gt;&lt;li&gt;Chat input responds with high-confidence canned responses&lt;/li&gt;&lt;li&gt;Source chip updates when switched from Home&lt;/li&gt;&lt;li&gt;Error screen demonstrates the recovery pattern&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Why not Figma&lt;/h4&gt;&lt;p&gt;Real DOM interactions communicate faster than clickable PNG prototypes. Stakeholders can share a URL instead of a Figma invite.&lt;/p&gt;" data-lb-href="03_prototype.html">
+        <div class="g-preview prev-proto">
+          <div class="pp-side">
+            <div class="pp-side-dot"></div>
+            <div class="pp-side-line"></div>
+            <div class="pp-side-line"></div>
+            <div class="pp-side-line"></div>
+          </div>
+          <div class="pp-main">
+            <div class="pp-top">
+              <div class="pp-top-t">Conversation</div>
+              <div class="pp-chip">● Snowflake</div>
+            </div>
+            <div class="pp-msg user">Top 5 products by revenue?</div>
+            <div class="pp-msg">Top 5 for Q2 2026. High confidence.</div>
+            <div class="pp-tbl">
+              <div class="pp-row"><span>Enterprise Pro</span><b>$4.3M</b></div>
+              <div class="pp-row"><span>Analytics Plat</span><b>$3.9M</b></div>
+              <div class="pp-row"><span>Data Pack</span><b>$2.7M</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="g-body">
+          <div class="g-num">03 · Prototype</div>
+          <div class="g-title">Clickable across 6 screens</div>
+          <div class="g-desc">Role switcher enforces access. SQL toggle works. Chat responds. Demo-ready.</div>
+          <div class="g-arrow">Open <span class="material-symbols-rounded" style="font-size:14px">arrow_forward</span></div>
+        </div>
+      </a>
+
+      <a href="04_user_guide.html" class="g-item tilt" data-category="docs" data-lb-title="04 · User Guide" data-lb-content="&lt;p&gt;v0.1's guide had 10 acknowledged gaps. v0.2's rewrites it as docs-as-UX — every chapter earns its place by closing a specific gap.&lt;/p&gt;&lt;h4&gt;What's new&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Role matrix — who sees what&lt;/li&gt;&lt;li&gt;12 supported data sources named, with GA / Beta / Preview status&lt;/li&gt;&lt;li&gt;8 error codes with recovery paths&lt;/li&gt;&lt;li&gt;CSV import spec — RFC 4180, 2000 row max, column order&lt;/li&gt;&lt;li&gt;Auxiliary activation mechanism explained explicitly&lt;/li&gt;&lt;li&gt;Glossary moved from appendix to inline tooltips&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Why it matters&lt;/h4&gt;&lt;p&gt;Documentation is part of the product surface. When the guide is vague, support tickets fill the gap.&lt;/p&gt;" data-lb-href="04_user_guide.html">
+        <div class="g-preview prev-guide">
+          <div class="pg-toc">
+            <div class="pg-toc-lbl">Get Started</div>
+            <div class="pg-toc-link">01 Overview</div>
+            <div class="pg-toc-link">02 Who Uses</div>
+            <div class="pg-toc-link active">03 Sources</div>
+            <div class="pg-toc-lbl" style="margin-top:6px">Use</div>
+            <div class="pg-toc-link">04 Connect</div>
+            <div class="pg-toc-link">05 Ask</div>
+          </div>
+          <div class="pg-body">
+            <div class="pg-num">CH 03</div>
+            <div class="pg-h">Supported data sources.</div>
+            <div class="pg-line"></div>
+            <div class="pg-line"></div>
+            <div class="pg-line sm"></div>
+            <div class="pg-callout">New in v0.2 — Snowflake, BigQuery, Databricks, Postgres, MySQL, CSV, REST…</div>
+          </div>
+        </div>
+        <div class="g-body">
+          <div class="g-num">04 · User Guide</div>
+          <div class="g-title">Docs are UX too</div>
+          <div class="g-desc">Role matrix. 12 sources named. 8 error codes with recovery. CSV spec. Glossary.</div>
+          <div class="g-arrow">Open <span class="material-symbols-rounded" style="font-size:14px">arrow_forward</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PROTOTYPE EMBED -->
+<section class="proto-section">
+  <div class="proto-inner">
+    <div class="sec-label"><span class="material-symbols-rounded">play_circle</span>Try It Live</div>
+    <h2 class="h2">The prototype, embedded.</h2>
+    <p class="body">Switch roles in the top bar. Toggle SQL. Send a message. Click Telemetry as a non-admin and watch it redirect.</p>
+
+    <div class="proto-frame">
+      <iframe src="03_prototype.html" loading="lazy" title="Karl v0.2 Interactive Prototype"></iframe>
+    </div>
+    <div class="proto-cta">
+      <a href="03_prototype.html" class="btn-primary">Open full screen<span class="material-symbols-rounded" style="font-size:18px">open_in_new</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- AI DISCLOSURE -->
+<section class="section" id="s-ai">
+  <div class="sec-label"><span class="material-symbols-rounded">handshake</span>Method &amp; Disclosure</div>
+  <h2 class="h2">Yes, I used AI. Here's the split.</h2>
+  <p class="body">This case study was produced in a working session with Claude. More useful to show the workflow than pretend four polished HTML files materialized from thin air.</p>
+
+  <div class="ai-grid">
+    <div class="ai-card">
+      <h4><span class="material-symbols-rounded">account_circle</span>What I owned</h4>
+      <ul>
+        <li><strong>Scoping.</strong> The four deliverables, visual language, audience.</li>
+        <li><strong>Every design decision.</strong> Personas, gap priority, IA, role tiers, activation mechanism.</li>
+        <li><strong>Quality judgment.</strong> Which gaps held up. What to drop. What to defer.</li>
+        <li><strong>Honesty calls.</strong> Dropping fabricated bugs. Refusing to call this AX.</li>
+      </ul>
+    </div>
+    <div class="ai-card">
+      <h4><span class="material-symbols-rounded">smart_toy</span>What Claude did</h4>
+      <ul>
+        <li><strong>Wrote the HTML/CSS.</strong> All deliverables and this page, to my direction.</li>
+        <li><strong>Drafted copy from specs.</strong> Audit findings, persona quotes, guide chapters.</li>
+        <li><strong>Generated inline SVG mocks</strong> used in the user guide.</li>
+        <li><strong>Pushed back on me.</strong> "Can we call this AX?" got a detailed no — which made the study better.</li>
+      </ul>
+    </div>
+    <div class="ai-card">
+      <h4><span class="material-symbols-rounded">lock_open</span>Why disclose</h4>
+      <ul>
+        <li><strong>Honest.</strong> Pretending solo unassisted wouldn't survive scrutiny.</li>
+        <li><strong>The workflow is the skill.</strong> Directing AI at pace is a real craft.</li>
+        <li><strong>Hiring has shifted.</strong> Most teams in 2026 assume AI-assisted output.</li>
+        <li><strong>Filter.</strong> Reviewers put off by this aren't teams I want.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ai-quote">
+    <div class="ai-quote-lbl">Working Heuristic</div>
+    <p>Remove Claude from this project and I'd still have the same diagnosis, priority matrix, and IA — it would just take two weeks instead of two hours. <em>The decisions are mine. The speed and craft are the collaboration.</em></p>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="metrics-section" id="s-results">
+  <div class="metrics-inner">
+    <div class="sec-label"><span class="material-symbols-rounded">bar_chart</span>Outcome</div>
+    <h2 class="h2">What this demonstrates — and what it doesn't claim.</h2>
+    <p class="body">Concept UX work labelled honestly. Predicted impact, not measured. If Karl v0.2 ships, this page updates with real numbers.</p>
+
+    <div class="metrics-grid">
+      <div class="m-card"><div class="m-icon"><span class="material-symbols-rounded">fact_check</span></div><div class="m-num cyan" data-count="13">0</div><div class="m-label">Gaps identified and prioritized on severity × effort matrix</div></div>
+      <div class="m-card"><div class="m-icon"><span class="material-symbols-rounded">rocket_launch</span></div><div class="m-num orange" data-count="6">0</div><div class="m-label">Quick Wins scoped for v0.2 cycle — highest ROI per hour</div></div>
+      <div class="m-card"><div class="m-icon"><span class="material-symbols-rounded">schedule</span></div><div class="m-num amber" data-count="2" data-suffix="h">0</div><div class="m-label">Production time from brief to four polished deliverables</div></div>
+      <div class="m-card"><div class="m-icon"><span class="material-symbols-rounded">lock</span></div><div class="m-num cyan" data-count="3">0</div><div class="m-label">Role tiers gating access — closes the biggest structural gap</div></div>
+      <div class="m-card"><div class="m-icon"><span class="material-symbols-rounded">dashboard</span></div><div class="m-num orange" data-count="6">0</div><div class="m-label">Screens wireframed and built as interactive prototype</div></div>
+      <div class="m-card"><div class="m-icon"><span class="material-symbols-rounded">menu_book</span></div><div class="m-num amber" data-count="12">0</div><div class="m-label">Guide chapters — every gap closed with a doc counterpart</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-brand"><img src="logo-white.png" alt="Karl">Karl v0.2 · Anna Nair · 2026</div>
+  <div>AI-assisted workflow · See Method section</div>
+</footer>
+
+<script>
+// Progress bar
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';
+});
+
+// Nav scrolled state
+const gnav=document.getElementById('gnav');
+const hero=document.getElementById('s-hero');
+window.addEventListener('scroll',()=>{
+  if(window.scrollY > hero.offsetHeight - 80) gnav.classList.add('scrolled');
+  else gnav.classList.remove('scrolled');
+});
+
+// Hero animations
+if(window.gsap){
+  gsap.to('.hero-eyebrow',{opacity:1,duration:.6,delay:.2});
+  gsap.to('.hero h1',{opacity:1,duration:.8,delay:.4});
+  gsap.to('.hero-sub',{opacity:1,duration:.8,delay:.7});
+  gsap.to('.hero-actions',{opacity:1,duration:.6,delay:.9});
+  gsap.to('.hero-stats',{opacity:1,duration:.6,delay:1.1});
+}
+
+// Decision accordion
+document.querySelectorAll('.dec-card').forEach(card=>{
+  card.querySelector('.dec-header').addEventListener('click',()=>{
+    const isOpen=card.classList.contains('open');
+    document.querySelectorAll('.dec-card').forEach(c=>c.classList.remove('open'));
+    if(!isOpen) card.classList.add('open');
+  });
+});
+
+// Metric count-up
+if(window.gsap && window.ScrollTrigger){
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('.m-num').forEach(el=>{
+    const target=parseFloat(el.dataset.count);
+    const suffix=el.dataset.suffix||'';
+    const obj={val:0};
+    ScrollTrigger.create({
+      trigger:el,start:'top 85%',
+      onEnter:()=>{
+        gsap.to(obj,{val:target,duration:1.6,ease:'power2.out',onUpdate:()=>{el.textContent=Math.round(obj.val)+suffix}});
+      }
+    });
+  });
+}
+
+/* ═══ STICKY CONTEXTUAL SIDEBAR ═══ */
+const csSidebar=document.getElementById('cs-sidebar');
+const csTitle=document.getElementById('cs-sb-title');
+const csCtx=document.getElementById('cs-sb-ctx');
+const csItems=document.querySelectorAll('.cs-sb-item');
+const csSections=['s-challenge','s-research','s-decisions','s-process','s-compare','s-work','s-ai','s-results'].map(id=>document.getElementById(id)).filter(Boolean);
+
+function updateSidebar(){
+  if(window.scrollY < hero.offsetHeight - 200){csSidebar.classList.remove('visible');return}
+  csSidebar.classList.add('visible');
+  let active=null;
+  csSections.forEach(s=>{
+    const r=s.getBoundingClientRect();
+    if(r.top<=200 && r.bottom>=200) active=s.id;
+  });
+  if(!active) return;
+  csItems.forEach(item=>{
+    const isActive=item.getAttribute('href')==='#'+active;
+    item.classList.toggle('active',isActive);
+    if(isActive){
+      csTitle.textContent=item.textContent.trim();
+      csCtx.textContent=item.dataset.ctx||'';
+    }
+  });
+}
+window.addEventListener('scroll',updateSidebar,{passive:true});
+updateSidebar();
+
+/* ═══ 3D CARD TILT ═══ */
+const tiltTargets=document.querySelectorAll('.tilt, .c-card, .p-card, .m-card, .dec-card, .g-item');
+tiltTargets.forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width;
+    const y=(e.clientY-r.top)/r.height;
+    const rx=(0.5-y)*8;
+    const ry=(x-0.5)*8;
+    card.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+    card.style.transition='transform .05s linear';
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='';
+    card.style.transition='transform .35s cubic-bezier(.2,.8,.2,1)';
+  });
+});
+
+/* ═══ HORIZONTAL SCROLL TIMELINE ═══ */
+if(window.gsap && window.ScrollTrigger){
+  const pin=document.getElementById('tl-pin');
+  const track=document.getElementById('tl-track');
+  const progFill=document.getElementById('tl-prog-fill');
+  const progLabel=document.getElementById('tl-prog-label');
+  if(pin && track){
+    const totalSteps=track.children.length;
+    const distance=track.scrollWidth-window.innerWidth+100;
+    gsap.to(track,{
+      x:-distance,
+      ease:'none',
+      scrollTrigger:{
+        trigger:pin,
+        start:'top top',
+        end:'bottom bottom',
+        scrub:.5,
+        onUpdate:self=>{
+          const pct=self.progress;
+          progFill.style.width=(pct*100)+'%';
+          const step=Math.min(totalSteps,Math.floor(pct*totalSteps)+1);
+          progLabel.textContent=`Step ${step} / ${totalSteps}`;
+        }
+      }
+    });
+  }
+}
+
+/* ═══ BEFORE/AFTER DRAG SLIDER ═══ */
+const baWrap=document.getElementById('ba-wrap');
+const baHandle=document.getElementById('ba-handle');
+if(baWrap && baHandle){
+  const baAfter=baWrap.querySelector('.ba-after');
+  let dragging=false;
+  function setPosition(clientX){
+    const r=baWrap.getBoundingClientRect();
+    let pct=((clientX-r.left)/r.width)*100;
+    pct=Math.max(4,Math.min(96,pct));
+    baHandle.style.left=pct+'%';
+    baAfter.style.clipPath=`inset(0 0 0 ${pct}%)`;
+  }
+  baWrap.addEventListener('mousedown',e=>{dragging=true;setPosition(e.clientX)});
+  window.addEventListener('mousemove',e=>{if(dragging) setPosition(e.clientX)});
+  window.addEventListener('mouseup',()=>dragging=false);
+  baWrap.addEventListener('touchstart',e=>{dragging=true;setPosition(e.touches[0].clientX)},{passive:true});
+  window.addEventListener('touchmove',e=>{if(dragging) setPosition(e.touches[0].clientX)},{passive:true});
+  window.addEventListener('touchend',()=>dragging=false);
+}
+
+/* ═══ GALLERY FILTER ═══ */
+document.querySelectorAll('.gf-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter=btn.dataset.filter;
+    document.querySelectorAll('.g-item').forEach(item=>{
+      const cat=item.dataset.category;
+      item.classList.toggle('hidden',filter!=='all' && cat!==filter);
+    });
+  });
+});
+
+/* ═══ LIGHTBOX ═══ */
+const lb=document.getElementById('lightbox');
+const lbTitle=document.getElementById('lb-title');
+const lbBody=document.getElementById('lb-body');
+const lbCta=document.getElementById('lb-cta');
+document.querySelectorAll('.g-item').forEach(item=>{
+  item.addEventListener('click',e=>{
+    e.preventDefault();
+    lbTitle.textContent=item.dataset.lbTitle;
+    lbBody.innerHTML=item.dataset.lbContent;
+    lbCta.href=item.dataset.lbHref;
+    lb.classList.add('open');
+    document.body.style.overflow='hidden';
+  });
+});
+function closeLb(){lb.classList.remove('open');document.body.style.overflow=''}
+document.getElementById('lb-close').addEventListener('click',closeLb);
+lb.addEventListener('click',e=>{if(e.target===lb) closeLb()});
+window.addEventListener('keydown',e=>{if(e.key==='Escape') closeLb()});
+</script>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-content">
+    <div class="lightbox-head">
+      <div class="lightbox-title" id="lb-title">Deliverable</div>
+      <button class="lightbox-close" id="lb-close" aria-label="Close"><span class="material-symbols-rounded">close</span></button>
+    </div>
+    <div class="lightbox-body" id="lb-body"></div>
+    <div style="padding:20px 28px;border-top:1px solid var(--border-light);background:var(--light)">
+      <a href="#" class="lightbox-cta" id="lb-cta">Open full deliverable <span class="material-symbols-rounded" style="font-size:16px">arrow_forward</span></a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

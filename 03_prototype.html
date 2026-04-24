@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karl Prototype | v0.2</title>
+<link rel="stylesheet" href="fonts.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blue:#0A1F44;--blue-light:#1E3D80;--blue-dark:#050F26;--blue-pale:#E0ECFC;
+  --cyan:#00B8D9;--cyan-light:#7FE3F0;--cyan-dark:#008CA8;--cyan-pale:#E5F7FB;
+  --orange:#FF6B35;--orange-light:#FF8F5E;--orange-pale:#FFE8DE;
+  --light:#FAFBFC;--light2:#F4F6F9;--light3:#E8EDF3;--light4:#D1DAE5;
+  --text-dark:#0A1F44;--text-mid:#3A4A63;--text-light:#6B7A91;--text-muted:#A6B3C4;
+  --border:#E8EDF3;
+  --green:#2E9D5E;--green-pale:#D9F2E3;
+  --red:#E5484D;--red-pale:#FFE5E6;
+  --amber:#E8A317;--amber-pale:#FFF3D6;
+}
+body{
+  font-family:'Degular-Regular',sans-serif;background:var(--light2);
+  color:var(--text-dark);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;min-height:100vh;
+}
+.material-symbols-rounded{font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;vertical-align:middle}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ══ GLOBAL NAV ══ */
+.gnav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 24px;background:#fff;border-bottom:1px solid var(--border);
+}
+.gnav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.gnav-logo{width:28px;height:28px;display:block}
+.gnav-wordmark{font-family:'DegularDisplay-Bold',sans-serif;color:var(--blue);font-size:15px;letter-spacing:-.01em;line-height:1}
+.gnav-wordmark .sub{font-family:'Degular-Regular',sans-serif;font-size:10.5px;color:var(--text-light);letter-spacing:.06em;margin-top:2px;display:block;text-transform:uppercase;font-weight:500}
+.gnav-links{display:flex;align-items:center;gap:4px}
+.gnav-link{
+  font-family:'Degular-Medium',sans-serif;font-size:12.5px;color:var(--text-mid);
+  text-decoration:none;padding:7px 13px;border-radius:100px;transition:all .2s;
+}
+.gnav-link:hover{color:var(--blue);background:var(--light2)}
+.gnav-link.active{background:var(--blue);color:#fff;font-family:'Degular-Bold',sans-serif}
+
+/* ══ PROTOTYPE CONTEXT BAR ══ */
+.pctx{
+  background:var(--blue-dark);color:#fff;padding:10px 24px;
+  display:flex;align-items:center;justify-content:space-between;font-size:12px;
+}
+.pctx-left{font-family:'Degular-Medium',sans-serif;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:10px}
+.pctx-left::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--orange)}
+.pctx-roles{display:flex;gap:4px;background:rgba(255,255,255,.06);padding:3px;border-radius:8px}
+.role-btn{
+  font-family:'Degular-Medium',sans-serif;font-size:11.5px;padding:5px 11px;border-radius:6px;
+  border:none;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;transition:all .15s;
+}
+.role-btn:hover{color:#fff}
+.role-btn.active{background:var(--orange);color:#fff}
+
+/* ══ APP FRAME ══ */
+.app{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 90px)}
+
+/* sidebar — scrolls naturally with document, no viewport lock */
+.sidebar{
+  background:var(--blue);color:#fff;padding:20px 14px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.sb-label{font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.4);padding:12px 10px 6px}
+.sb-item{
+  padding:8px 10px;border-radius:7px;display:flex;align-items:center;gap:10px;
+  font-family:'Degular-Medium',sans-serif;font-size:13px;color:rgba(255,255,255,.75);
+  cursor:pointer;transition:all .15s;
+}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.sb-item.active{background:var(--blue-light);color:#fff;font-family:'Degular-Bold',sans-serif}
+.sb-item .material-symbols-rounded{font-size:18px;opacity:.9}
+.sb-item .lock{margin-left:auto;font-size:14px;opacity:.5}
+.sb-item[data-locked="true"]{opacity:.5;cursor:not-allowed}
+.sb-item[data-locked="true"]:hover{background:transparent}
+.sb-user{
+  margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:10px;padding:12px 10px;
+}
+.sb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DegularDisplay-Bold',sans-serif;font-size:12px}
+.sb-user-info .name{font-family:'Degular-Medium',sans-serif;font-size:12.5px;color:#fff}
+.sb-user-info .role{font-family:'Degular-Regular',sans-serif;font-size:10.5px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em}
+
+/* main content */
+.main{background:#fff;min-width:0}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;border-bottom:1px solid var(--border);
+  position:sticky;top:90px;background:#fff;z-index:40;
+}
+.pt-title{font-family:'DegularDisplay-Bold',sans-serif;font-size:19px;letter-spacing:-.015em}
+.pt-crumb{font-family:'Degular-Medium',sans-serif;font-size:10.5px;color:var(--text-light);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px}
+.src-chip{
+  display:flex;align-items:center;gap:7px;padding:6px 12px;
+  background:var(--cyan-pale);border:1px solid rgba(0,184,217,.25);border-radius:100px;
+  font-family:'Degular-Medium',sans-serif;font-size:12px;color:var(--cyan-dark);
+}
+.src-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Views — natural document flow, no viewport lock */
+.view{display:none;animation:fadeIn .25s ease}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.view-content{padding:28px;max-width:1200px;margin:0 auto}
+
+/* ══ BUTTONS ══ */
+.btn{
+  padding:9px 15px;border-radius:8px;font-family:'Degular-Medium',sans-serif;font-size:12.5px;
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;border:none;transition:all .15s;text-decoration:none;
+}
+.btn-pri{background:var(--orange);color:#fff}
+.btn-pri:hover{background:var(--orange-light);transform:translateY(-1px);box-shadow:0 4px 12px rgba(255,107,53,.3)}
+.btn-sec{background:#fff;color:var(--blue);border:1px solid var(--border)}
+.btn-sec:hover{border-color:var(--blue)}
+.btn-ghost{background:transparent;color:var(--text-light)}
+.btn-ghost:hover{color:var(--blue);background:var(--light2)}
+.btn .material-symbols-rounded{font-size:16px}
+
+/* ══ HOME ══ */
+.home-hero{
+  background:linear-gradient(135deg,var(--blue),var(--blue-light));
+  color:#fff;border-radius:16px;padding:36px;position:relative;overflow:hidden;
+}
+.home-hero::after{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(255,107,53,.25),transparent 60%)}
+.hh-kicker{font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--cyan-light);text-transform:uppercase;letter-spacing:.14em;margin-bottom:10px;position:relative}
+.home-hero h2{font-family:'DegularDisplay-Bold',sans-serif;font-size:30px;line-height:1.1;letter-spacing:-.02em;position:relative;max-width:600px}
+.home-hero p{font-family:'Degular-Regular',sans-serif;margin-top:14px;font-size:15px;color:rgba(255,255,255,.75);max-width:560px;position:relative}
+.home-hero .btns{margin-top:24px;display:flex;gap:10px;position:relative}
+
+.source-picker{margin-top:28px}
+.source-picker h3{font-family:'DegularDisplay-Bold',sans-serif;font-size:17px;letter-spacing:-.01em;margin-bottom:8px}
+.source-picker .sub{font-family:'Degular-Regular',sans-serif;font-size:13px;color:var(--text-light);margin-bottom:18px}
+.source-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.source-card{
+  padding:18px;border-radius:12px;border:1px solid var(--border);background:#fff;
+  cursor:pointer;transition:all .15s;
+}
+.source-card:hover{border-color:var(--cyan);box-shadow:0 4px 16px rgba(10,31,68,.08);transform:translateY(-2px)}
+.source-card.connected{position:relative}
+.source-card.connected::before{content:'';position:absolute;top:14px;right:14px;width:8px;height:8px;background:var(--green);border-radius:50%}
+.sc-icon{width:38px;height:38px;border-radius:10px;background:var(--light2);display:flex;align-items:center;justify-content:center;color:var(--blue);margin-bottom:12px}
+.source-card h4{font-family:'DegularDisplay-Bold',sans-serif;font-size:14px;letter-spacing:-.01em;margin-bottom:3px}
+.sc-meta{font-family:'Degular-Regular',sans-serif;font-size:11.5px;color:var(--text-light)}
+.sc-status{font-family:'Degular-Medium',sans-serif;font-size:10.5px;margin-top:8px;text-transform:uppercase;letter-spacing:.08em}
+.source-card.connected .sc-status{color:var(--green)}
+.source-card.available .sc-status{color:var(--text-light)}
+
+/* ══ CONVERSATION ══ */
+.conv-layout{display:grid;grid-template-columns:260px 1fr;gap:0;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:0}
+.conv-sessions{background:var(--light2);padding:18px 14px;border-right:1px solid var(--border)}
+.conv-sessions h3{font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--text-light);margin-bottom:10px}
+.session-item{padding:10px 12px;border-radius:8px;margin-bottom:3px;cursor:pointer;transition:background .15s}
+.session-item:hover{background:#fff}
+.session-item.active{background:#fff;box-shadow:0 1px 3px rgba(10,31,68,.08)}
+.session-title{font-family:'Degular-Medium',sans-serif;font-size:13px;color:var(--blue);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-meta{font-family:'Degular-Regular',sans-serif;font-size:10.5px;color:var(--text-light);margin-top:2px}
+
+.conv-main{display:flex;flex-direction:column;min-height:500px}
+.conv-messages{padding:28px 40px;display:flex;flex-direction:column;gap:22px;flex:1}
+.msg{display:flex;gap:12px;max-width:780px}
+.msg.user{margin-left:auto;flex-direction:row-reverse}
+.msg-avatar{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'DegularDisplay-Bold',sans-serif;font-size:13px}
+.msg-avatar.karl{background:linear-gradient(135deg,var(--orange),var(--orange-light))}
+.msg-avatar.user-av{background:var(--blue)}
+.msg-body{flex:1;padding:13px 16px;border-radius:12px;background:var(--light2);line-height:1.5;font-family:'Degular-Regular',sans-serif;font-size:14px}
+.msg.user .msg-body{background:var(--blue);color:#fff}
+.msg-name{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);margin-bottom:4px}
+.msg.user .msg-name{color:var(--cyan-light)}
+
+.confidence{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:100px;font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.confidence.high{background:var(--green-pale);color:var(--green)}
+
+.sql-section{margin-top:10px;border-top:1px dashed var(--border);padding-top:10px}
+.sql-toggle{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:#fff;border:1px solid var(--border);border-radius:6px;font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--text-mid);cursor:pointer}
+.sql-toggle:hover{border-color:var(--cyan);color:var(--cyan-dark)}
+.sql-block{margin-top:8px;background:var(--blue-dark);color:#b8e9f5;padding:12px 14px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.55;white-space:pre;overflow-x:auto;display:none}
+.sql-block.open{display:block;animation:fadeIn .2s ease}
+.sql-block .k{color:var(--orange-light);font-weight:600}
+.sql-block .s{color:var(--cyan-light)}
+.sql-block .n{color:#E8D48F}
+
+.result-block{margin-top:10px;background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.result-head{padding:10px 14px;background:var(--light2);font-family:'Degular-Medium',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);display:flex;justify-content:space-between}
+.result-table{width:100%;border-collapse:collapse;font-family:'Degular-Regular',sans-serif;font-size:12.5px}
+.result-table th{text-align:left;padding:9px 14px;background:var(--light2);border-bottom:1px solid var(--border);font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light)}
+.result-table td{padding:9px 14px;border-bottom:1px solid var(--border)}
+.result-table tr:last-child td{border-bottom:none}
+.result-table .num{font-variant-numeric:tabular-nums;font-family:'Degular-Medium',sans-serif;text-align:right}
+.result-actions{padding:8px 14px;background:var(--light2);border-top:1px solid var(--border);display:flex;gap:6px}
+
+.suggestions{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.sugg{padding:6px 11px;background:#fff;border:1px solid var(--border);border-radius:100px;font-family:'Degular-Regular',sans-serif;font-size:12px;color:var(--text-mid);cursor:pointer;transition:all .15s}
+.sugg:hover{border-color:var(--cyan);color:var(--cyan-dark);background:var(--cyan-pale)}
+
+.conv-input-bar{padding:14px 40px 28px;border-top:1px solid var(--border);background:#fff}
+.conv-input{display:flex;gap:10px;align-items:center;background:var(--light2);border:1px solid var(--border);border-radius:12px;padding:9px 14px;transition:all .15s}
+.conv-input:focus-within{border-color:var(--cyan);background:#fff;box-shadow:0 0 0 3px rgba(0,184,217,.1)}
+.conv-input input{flex:1;border:none;background:transparent;font-family:'Degular-Regular',sans-serif;font-size:13.5px;color:var(--blue);outline:none}
+.conv-input input::placeholder{color:var(--text-muted)}
+.send-btn{width:32px;height:32px;border-radius:7px;border:none;background:var(--orange);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.send-btn:hover{background:var(--orange-light)}
+.conv-meta{display:flex;justify-content:space-between;margin-top:6px;font-family:'Degular-Regular',sans-serif;font-size:10.5px;color:var(--text-light)}
+.conv-meta b{font-family:'Degular-Medium',sans-serif;color:var(--cyan-dark)}
+
+/* ══ TRAINING ══ */
+.sec-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}
+.sec-head h2{font-family:'DegularDisplay-Bold',sans-serif;font-size:22px;letter-spacing:-.015em}
+.sec-head .sub{font-family:'Degular-Regular',sans-serif;font-size:13px;color:var(--text-light);margin-top:3px}
+.sec-head .actions{display:flex;gap:6px}
+
+.sync-banner{
+  background:var(--cyan-pale);border:1px solid rgba(0,184,217,.2);border-radius:10px;
+  padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;
+}
+.sync-banner .material-symbols-rounded{color:var(--cyan-dark);font-size:20px}
+.sync-banner .text{flex:1;font-family:'Degular-Regular',sans-serif;font-size:12.5px;color:var(--blue)}
+.sync-banner b{font-family:'Degular-Medium',sans-serif;color:var(--cyan-dark)}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px}
+.kpi-lbl{font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);margin-bottom:6px}
+.kpi-num{font-family:'DegularDisplay-Bold',sans-serif;font-size:28px;letter-spacing:-.02em;line-height:1}
+.kpi-delta{font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--green);margin-top:5px}
+.kpi-delta.down{color:var(--red)}
+
+.tbl-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.search-input{flex:1;max-width:340px;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1px solid var(--border);border-radius:8px}
+.search-input input{border:none;background:none;outline:none;font-family:'Degular-Regular',sans-serif;font-size:12.5px;flex:1}
+.chip-row{display:flex;gap:5px}
+.chip{padding:6px 11px;background:#fff;border:1px solid var(--border);border-radius:100px;font-family:'Degular-Medium',sans-serif;font-size:11px;color:var(--text-mid);cursor:pointer}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+.tbl-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{text-align:left;padding:11px 16px;background:var(--light2);border-bottom:1px solid var(--border);font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light)}
+.tbl tbody td{padding:13px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:var(--light2);cursor:pointer}
+.tp-nl{font-family:'Degular-Medium',sans-serif;font-size:13px;color:var(--blue);line-height:1.3}
+.tp-sql{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tp-status{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-family:'Degular-Medium',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.tp-status.validated{background:var(--green-pale);color:var(--green)}
+.tp-status.pending{background:var(--amber-pale);color:var(--amber)}
+.tp-status.failed{background:var(--red-pale);color:var(--red)}
+.tp-tag{display:inline-block;padding:2px 7px;background:var(--cyan-pale);color:var(--cyan-dark);border-radius:4px;font-family:'Degular-Medium',sans-serif;font-size:10.5px}
+
+/* ══ KNOWLEDGE ══ */
+.kg-layout{display:grid;grid-template-columns:240px 1fr 280px;gap:0;background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.kg-nav{background:#fff;border-right:1px solid var(--border);padding:22px 14px}
+.kg-section{margin-bottom:18px}
+.kg-lbl{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.kg-lbl .lock{color:var(--amber);font-size:14px}
+.kg-item{padding:7px 10px;border-radius:6px;font-family:'Degular-Medium',sans-serif;font-size:12.5px;color:var(--text-mid);cursor:pointer;margin-bottom:2px;display:flex;align-items:center;justify-content:space-between;transition:all .15s}
+.kg-item:hover{background:var(--light2)}
+.kg-item.active{background:var(--blue);color:#fff}
+.kg-item .count{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)}
+.kg-item.active .count{color:rgba(255,255,255,.6)}
+
+.kg-editor{padding:24px;background:var(--light2)}
+.kg-head{display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;gap:14px}
+.kg-crumb{font-family:'Degular-Medium',sans-serif;font-size:10.5px;color:var(--text-light);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.kg-ttl{font-family:'DegularDisplay-Bold',sans-serif;font-size:20px;letter-spacing:-.02em}
+.kg-ttl-desc{font-family:'Degular-Regular',sans-serif;font-size:12.5px;color:var(--text-light);margin-top:3px;max-width:520px}
+.kg-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-top:6px;background:var(--cyan-pale);color:var(--cyan-dark)}
+.kg-actions{display:flex;gap:6px}
+
+.kg-editor-box{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.kg-tabs{display:flex;border-bottom:1px solid var(--border)}
+.kg-tab{padding:11px 18px;font-family:'Degular-Medium',sans-serif;font-size:12px;color:var(--text-light);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.kg-tab.active{color:var(--blue);border-bottom-color:var(--orange);font-family:'Degular-Bold',sans-serif}
+.kg-area{padding:22px;min-height:340px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:var(--blue);background:var(--light)}
+.rule-line{display:block;padding:1px 0}
+.rule-line .num{color:var(--text-muted);margin-right:12px;user-select:none}
+.kw{color:var(--orange);font-weight:600}
+.em{color:var(--cyan-dark)}
+.kg-foot{padding:12px 18px;background:var(--light2);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-family:'Degular-Regular',sans-serif;font-size:11.5px;color:var(--text-light)}
+.kg-foot .saved{color:var(--green);display:flex;align-items:center;gap:5px}
+
+.kg-side{background:#fff;border-left:1px solid var(--border);padding:22px 18px}
+.kg-side-block{margin-bottom:22px}
+.kg-side-lbl{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-light);margin-bottom:9px}
+.ver-item{padding:9px 11px;border-radius:7px;margin-bottom:4px;cursor:pointer;border:1px solid transparent}
+.ver-item:hover{background:var(--light2)}
+.ver-item.current{border-color:var(--cyan);background:var(--cyan-pale)}
+.ver-lbl{font-family:'Degular-Medium',sans-serif;font-size:12px;display:flex;justify-content:space-between}
+.v-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--cyan-dark)}
+.ver-meta{font-family:'Degular-Regular',sans-serif;font-size:10.5px;color:var(--text-light);margin-top:2px}
+
+/* ══ TELEMETRY ══ */
+.tel-filters{display:flex;gap:8px;margin-bottom:18px;align-items:center;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:10px}
+.tel-filter{display:flex;align-items:center;gap:8px}
+.tel-filter label{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light)}
+.tel-select{padding:5px 9px;background:var(--light2);border:1px solid var(--border);border-radius:6px;font-family:'Degular-Regular',sans-serif;font-size:12px;color:var(--blue);cursor:pointer}
+
+.tel-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:14px}
+.tel-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px}
+.tel-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.tel-card-ttl{font-family:'DegularDisplay-Bold',sans-serif;font-size:14px;letter-spacing:-.01em}
+.tel-card-sub{font-family:'Degular-Regular',sans-serif;font-size:11.5px;color:var(--text-light);margin-top:2px}
+.chart-bars{display:flex;align-items:end;gap:7px;height:200px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-bar{width:100%;background:linear-gradient(180deg,var(--cyan),var(--cyan-dark));border-radius:5px 5px 2px 2px;min-height:4px;transition:all .2s}
+.bar-bar.accent{background:linear-gradient(180deg,var(--orange),var(--orange-light))}
+.bar-col-label{font-family:'Degular-Medium',sans-serif;font-size:10.5px;color:var(--text-light)}
+
+.breakdown{margin-top:6px}
+.bd-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.bd-row:last-child{border-bottom:none}
+.bd-row .label{flex:1;font-family:'Degular-Medium',sans-serif;font-size:12.5px;color:var(--blue)}
+.bd-row .track{flex:2;height:6px;background:var(--light3);border-radius:100px;overflow:hidden}
+.bd-row .fill{height:100%;border-radius:100px}
+.bd-row .val{font-family:'DegularDisplay-Bold',sans-serif;font-size:11.5px;min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* ══ ERROR ══ */
+.err-container{max-width:640px;margin:48px auto;text-align:center;padding:32px}
+.err-icon{width:72px;height:72px;margin:0 auto 20px;border-radius:18px;background:var(--red-pale);display:flex;align-items:center;justify-content:center;color:var(--red)}
+.err-icon .material-symbols-rounded{font-size:40px}
+.err-container h2{font-family:'DegularDisplay-Bold',sans-serif;font-size:24px;letter-spacing:-.02em;margin-bottom:10px}
+.err-container p{font-family:'Degular-Regular',sans-serif;font-size:14px;color:var(--text-mid);margin-bottom:6px;line-height:1.55}
+.err-details{background:var(--light2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:20px;text-align:left}
+.err-details h4{font-family:'Degular-Medium',sans-serif;font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-light);margin-bottom:8px}
+.err-details code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-mid);display:block;line-height:1.55}
+.err-actions{display:flex;gap:8px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--blue);color:#fff;padding:12px 18px;border-radius:10px;box-shadow:0 12px 40px rgba(10,31,68,.2);display:flex;align-items:center;gap:10px;font-family:'Degular-Medium',sans-serif;font-size:12.5px;z-index:200;transform:translateY(120%);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast .material-symbols-rounded{color:var(--green)}
+
+/* Responsive */
+@media (max-width:1024px){
+  .app{grid-template-columns:64px 1fr}
+  .sidebar .sb-item span:not(.material-symbols-rounded):not(.lock),.sb-label,.sb-user-info{display:none}
+  .conv-layout,.kg-layout{grid-template-columns:1fr}
+  .conv-sessions,.kg-nav,.kg-side{display:none}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .tel-grid{grid-template-columns:1fr}
+  .gnav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- GLOBAL NAV -->
+<nav class="gnav">
+  <a href="index.html" class="gnav-brand">
+    <img src="logo-gradient.png" class="gnav-logo" alt="Karl">
+    <div class="gnav-wordmark">Karl<span class="sub">v0.2 UX Package</span></div>
+  </a>
+  <div class="gnav-links">
+    <a href="index.html" class="gnav-link">Case Study</a>
+    <a href="01_ux_audit.html" class="gnav-link">Audit</a>
+    <a href="02_layouts.html" class="gnav-link">Layouts</a>
+    <a href="03_prototype.html" class="gnav-link active">Prototype</a>
+    <a href="04_user_guide.html" class="gnav-link">Guide</a>
+  </div>
+</nav>
+
+<!-- PROTOTYPE CONTEXT -->
+<div class="pctx">
+  <div class="pctx-left">Interactive Prototype · 6 screens · Role-switchable</div>
+  <div class="pctx-roles">
+    <button class="role-btn" onclick="setRole('priya',event)">Priya · User</button>
+    <button class="role-btn active" onclick="setRole('raj',event)">Raj · Power</button>
+    <button class="role-btn" onclick="setRole('meera',event)">Meera · Admin</button>
+  </div>
+</div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-label">Work</div>
+    <div class="sb-item" data-view="home" onclick="showView('home')"><span class="material-symbols-rounded">home</span><span>Home</span></div>
+    <div class="sb-item active" data-view="conversation" onclick="showView('conversation')"><span class="material-symbols-rounded">chat</span><span>Conversation</span></div>
+
+    <div class="sb-label">Configure</div>
+    <div class="sb-item" data-view="training" onclick="showView('training')"><span class="material-symbols-rounded">school</span><span>Training</span></div>
+    <div class="sb-item" data-view="knowledge" onclick="showView('knowledge')"><span class="material-symbols-rounded">menu_book</span><span>Knowledge</span></div>
+
+    <div class="sb-label">Admin</div>
+    <div class="sb-item" data-view="telemetry" onclick="showView('telemetry')"><span class="material-symbols-rounded">insights</span><span>Telemetry</span><span class="material-symbols-rounded lock">lock</span></div>
+
+    <div class="sb-user">
+      <div class="sb-avatar" id="userAvatar" style="background:var(--orange)">R</div>
+      <div class="sb-user-info">
+        <div class="name" id="userName">Raj Srinivasan</div>
+        <div class="role" id="userRole">Power User</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="pt-crumb" id="pageCrumb">WORK</div>
+        <div class="pt-title" id="pageHeader">Conversation</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="src-chip"><span class="dot"></span>sales_warehouse · Snowflake</div>
+      </div>
+    </div>
+
+    <!-- HOME -->
+    <div class="view" id="view-home">
+      <div class="view-content">
+        <div class="home-hero">
+          <div class="hh-kicker">Good afternoon, <span id="heroName">Raj</span></div>
+          <h2>What data do you want to query today?</h2>
+          <p>Karl connects to your warehouse, database, or file source and answers questions in plain English — with the SQL visible for verification.</p>
+          <div class="btns">
+            <button class="btn btn-pri" onclick="showView('conversation')"><span class="material-symbols-rounded">chat</span>Continue last conversation</button>
+          </div>
+        </div>
+
+        <div class="source-picker">
+          <h3>Your data sources</h3>
+          <div class="sub">Click a source to start a conversation. Connected sources stay ready across sessions.</div>
+          <div class="source-cards">
+            <div class="source-card connected" onclick="showView('conversation')">
+              <div class="sc-icon"><span class="material-symbols-rounded">cloud</span></div>
+              <h4>sales_warehouse</h4>
+              <div class="sc-meta">Snowflake · 147 tables</div>
+              <div class="sc-status">Connected · healthy</div>
+            </div>
+            <div class="source-card connected" onclick="showView('conversation')">
+              <div class="sc-icon"><span class="material-symbols-rounded">storage</span></div>
+              <h4>ops_postgres</h4>
+              <div class="sc-meta">PostgreSQL · 42 tables</div>
+              <div class="sc-status">Connected · healthy</div>
+            </div>
+            <div class="source-card available" onclick="showToast('Connector catalog opens here')">
+              <div class="sc-icon" style="color:var(--text-muted)"><span class="material-symbols-rounded">add_circle</span></div>
+              <h4>Add BigQuery</h4>
+              <div class="sc-meta">Google Cloud</div>
+              <div class="sc-status">Available</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONVERSATION -->
+    <div class="view active" id="view-conversation">
+      <div class="view-content">
+        <div class="conv-layout">
+          <aside class="conv-sessions">
+            <h3>Sessions</h3>
+            <div class="session-item active"><div class="session-title">Q2 revenue by product</div><div class="session-meta">Just now · sales_warehouse</div></div>
+            <div class="session-item"><div class="session-title">Customer churn breakdown</div><div class="session-meta">Yesterday · sales_warehouse</div></div>
+            <div class="session-item"><div class="session-title">Order fulfilment SLA</div><div class="session-meta">Mon · ops_postgres</div></div>
+          </aside>
+
+          <div class="conv-main">
+            <div class="conv-messages" id="convMessages">
+              <div class="msg user">
+                <div class="msg-avatar user-av">R</div>
+                <div class="msg-body">
+                  <div class="msg-name">You</div>
+                  What were the top 5 products by revenue last quarter?
+                </div>
+              </div>
+              <div class="msg">
+                <div class="msg-avatar karl">K</div>
+                <div class="msg-body">
+                  <div class="msg-name">Karl</div>
+                  Top 5 products by revenue for Q2 2026 (Apr–Jun). Using <b>sales_warehouse.fact_orders</b> joined to <b>dim_product</b>.
+                  <span class="confidence high" style="margin-left:6px"><span class="material-symbols-rounded" style="font-size:12px">verified</span>High confidence</span>
+
+                  <div class="sql-section">
+                    <div class="sql-toggle" onclick="toggleSQL(this)"><span class="material-symbols-rounded">code</span>View SQL</div>
+                    <div class="sql-block"><span class="k">SELECT</span> p.product_name, <span class="k">SUM</span>(o.revenue) <span class="k">AS</span> total_revenue
+<span class="k">FROM</span> fact_orders o
+<span class="k">JOIN</span> dim_product p <span class="k">ON</span> o.product_id = p.product_id
+<span class="k">WHERE</span> o.order_date <span class="k">BETWEEN</span> <span class="s">'2026-04-01'</span> <span class="k">AND</span> <span class="s">'2026-06-30'</span>
+<span class="k">GROUP BY</span> p.product_name
+<span class="k">ORDER BY</span> total_revenue <span class="k">DESC</span> <span class="k">LIMIT</span> <span class="n">5</span>;</div>
+                  </div>
+
+                  <div class="result-block">
+                    <div class="result-head"><span>5 rows · 1.2s</span><span>3:42 PM</span></div>
+                    <table class="result-table">
+                      <thead><tr><th>Product</th><th class="num">Revenue</th></tr></thead>
+                      <tbody>
+                        <tr><td>Enterprise Suite Pro</td><td class="num">$4,287,400</td></tr>
+                        <tr><td>Analytics Platform</td><td class="num">$3,912,180</td></tr>
+                        <tr><td>Data Connector Pack</td><td class="num">$2,741,560</td></tr>
+                        <tr><td>Visualization Engine</td><td class="num">$2,104,220</td></tr>
+                        <tr><td>API Gateway</td><td class="num">$1,897,350</td></tr>
+                      </tbody>
+                    </table>
+                    <div class="result-actions">
+                      <button class="btn btn-ghost"><span class="material-symbols-rounded">download</span>Export</button>
+                      <button class="btn btn-ghost"><span class="material-symbols-rounded">bar_chart</span>Visualize</button>
+                    </div>
+                  </div>
+
+                  <div class="suggestions">
+                    <div class="sugg" onclick="askFollowup('Break that down by region')">Break by region</div>
+                    <div class="sugg" onclick="askFollowup('Compare to Q1')">Compare to Q1</div>
+                    <div class="sugg" onclick="askFollowup('Show monthly trend')">Monthly trend</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="conv-input-bar">
+              <div class="conv-input">
+                <span class="material-symbols-rounded" style="color:var(--text-muted)">chat</span>
+                <input type="text" id="convInput" placeholder="Ask a question about sales_warehouse…">
+                <button class="send-btn" onclick="sendMessage()"><span class="material-symbols-rounded">arrow_upward</span></button>
+              </div>
+              <div class="conv-meta">
+                <span>Shift + Enter for newline</span>
+                <span>Querying <b>sales_warehouse</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAINING -->
+    <div class="view" id="view-training">
+      <div class="view-content">
+        <div class="sec-head">
+          <div>
+            <h2>Training Data</h2>
+            <div class="sub">SQL–language pairs that teach Karl your business terminology.</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-sec" onclick="showToast('Import opens with preview')"><span class="material-symbols-rounded">upload</span>Import</button>
+            <button class="btn btn-pri" onclick="showToast('Add pair modal opens here')"><span class="material-symbols-rounded">add</span>Add pair</button>
+          </div>
+        </div>
+
+        <div class="sync-banner">
+          <span class="material-symbols-rounded">sync</span>
+          <div class="text"><b>Training pairs apply on the next query.</b> No batch sync — live in ~5 seconds.</div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-lbl">Total pairs</div><div class="kpi-num">342</div><div class="kpi-delta">+18 this week</div></div>
+          <div class="kpi"><div class="kpi-lbl">Validated</div><div class="kpi-num" style="color:var(--green)">327</div><div class="kpi-delta">95.6% pass</div></div>
+          <div class="kpi"><div class="kpi-lbl">Pending</div><div class="kpi-num" style="color:var(--amber)">12</div><div class="kpi-delta down">+4 this week</div></div>
+          <div class="kpi"><div class="kpi-lbl">Failed</div><div class="kpi-num" style="color:var(--red)">3</div><div class="kpi-delta down">Needs attention</div></div>
+        </div>
+
+        <div class="tbl-toolbar">
+          <div class="search-input"><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:16px">search</span><input placeholder="Search training pairs…"></div>
+          <div class="chip-row">
+            <div class="chip active">All · 342</div>
+            <div class="chip">Validated</div>
+            <div class="chip">Pending</div>
+            <div class="chip">Failed</div>
+          </div>
+        </div>
+
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th style="width:32%">Natural language</th><th style="width:42%">SQL query</th><th style="width:10%">Status</th><th style="width:10%">Owner</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="tp-nl">Total sales by region this year</div><span class="tp-tag">Finance</span></td>
+                <td><div class="tp-sql">SELECT region, SUM(sales) FROM orders WHERE YEAR(date) = YEAR(GETDATE()) GROUP BY region</div></td>
+                <td><span class="tp-status validated"><span class="material-symbols-rounded" style="font-size:11px">check</span>Validated</span></td>
+                <td style="font-family:'Degular-Regular',sans-serif;font-size:11.5px">Raj S.</td>
+                <td><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:16px">more_horiz</span></td>
+              </tr>
+              <tr>
+                <td><div class="tp-nl">Monthly recurring revenue</div><span class="tp-tag">Finance</span></td>
+                <td><div class="tp-sql">SELECT DATE_TRUNC('month', sub_start) AS month, SUM(monthly_value) FROM subscriptions WHERE status = 'active' GROUP BY 1</div></td>
+                <td><span class="tp-status validated"><span class="material-symbols-rounded" style="font-size:11px">check</span>Validated</span></td>
+                <td style="font-family:'Degular-Regular',sans-serif;font-size:11.5px">Raj S.</td>
+                <td><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:16px">more_horiz</span></td>
+              </tr>
+              <tr>
+                <td><div class="tp-nl">Customer churn rate last 90 days</div><span class="tp-tag">Finance</span></td>
+                <td><div class="tp-sql">SELECT COUNT(CASE WHEN cancelled_at BETWEEN CURRENT_DATE - INTERVAL '90 days' AND CURRENT_DATE THEN 1 END) / NULLIF(COUNT(*), 0) FROM customers</div></td>
+                <td><span class="tp-status validated"><span class="material-symbols-rounded" style="font-size:11px">check</span>Validated</span></td>
+                <td style="font-family:'Degular-Regular',sans-serif;font-size:11.5px">Priya N.</td>
+                <td><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:16px">more_horiz</span></td>
+              </tr>
+              <tr>
+                <td><div class="tp-nl">Orders fulfilled within SLA</div><span class="tp-tag">Operations</span></td>
+                <td><div class="tp-sql">SELECT COUNT(*) FROM orders WHERE fulfilled_at - ordered_at &lt;= INTERVAL '48 hours' AND order_date &gt;= CURRENT_DATE - 30</div></td>
+                <td><span class="tp-status pending"><span class="material-symbols-rounded" style="font-size:11px">schedule</span>Pending</span></td>
+                <td style="font-family:'Degular-Regular',sans-serif;font-size:11.5px">Raj S.</td>
+                <td><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:16px">more_horiz</span></td>
+              </tr>
+              <tr>
+                <td><div class="tp-nl">Revenue by product category Q2</div><span class="tp-tag">Finance</span></td>
+                <td><div class="tp-sql">SELECT category, SUM(revene) FROM fact_orders WHERE quarter = 'Q2-2026' GROUP BY category</div></td>
+                <td><span class="tp-status failed"><span class="material-symbols-rounded" style="font-size:11px">error</span>SQL error</span></td>
+                <td style="font-family:'Degular-Regular',sans-serif;font-size:11.5px">Priya N.</td>
+                <td><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:16px">more_horiz</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KNOWLEDGE -->
+    <div class="view" id="view-knowledge">
+      <div class="view-content">
+        <div class="kg-layout">
+          <aside class="kg-nav">
+            <div class="kg-section">
+              <div class="kg-lbl">Critical Instructions <span class="material-symbols-rounded lock">lock</span></div>
+              <div class="kg-item"><span>Core behavior</span><span class="count">8</span></div>
+              <div class="kg-item"><span>Data accuracy</span><span class="count">4</span></div>
+              <div class="kg-item"><span>Query interpretation</span><span class="count">6</span></div>
+            </div>
+            <div class="kg-section">
+              <div class="kg-lbl">Auxiliary Instructions</div>
+              <div class="kg-item active" onclick="setKG(this)"><span>Finance</span><span class="count">12</span></div>
+              <div class="kg-item" onclick="setKG(this)"><span>Operations</span><span class="count">7</span></div>
+              <div class="kg-item" onclick="setKG(this)"><span>HR</span><span class="count">4</span></div>
+              <div class="kg-item" onclick="setKG(this)"><span>Marketing</span><span class="count">9</span></div>
+            </div>
+          </aside>
+
+          <div class="kg-editor">
+            <div class="kg-head">
+              <div>
+                <div class="kg-crumb">Auxiliary · Finance</div>
+                <div class="kg-ttl">Finance — Fiscal year mapping</div>
+                <div class="kg-ttl-desc">How Karl interprets date ranges, fiscal vs calendar year, currency rules, and revenue recognition.</div>
+                <div class="kg-badge"><span class="material-symbols-rounded" style="font-size:12px">layers</span>Auxiliary · layered on Critical</div>
+              </div>
+              <div class="kg-actions">
+                <button class="btn btn-sec"><span class="material-symbols-rounded">science</span>Test</button>
+                <button class="btn btn-pri" onclick="showToast('Saved · v2.4')"><span class="material-symbols-rounded">save</span>Save</button>
+              </div>
+            </div>
+
+            <div class="kg-editor-box">
+              <div class="kg-tabs">
+                <div class="kg-tab active">Rules</div>
+                <div class="kg-tab">Test queries</div>
+                <div class="kg-tab">Activation</div>
+                <div class="kg-tab">History</div>
+              </div>
+              <div class="kg-area">
+<span class="rule-line"><span class="num">01</span>  <span class="kw">WHEN</span> query references <span class="em">"last quarter"</span>, <span class="em">"fiscal Q[N]"</span>:</span>
+<span class="rule-line"><span class="num">02</span>     <span class="kw">INTERPRET</span> as fiscal quarter (FY starts <span class="em">April 1</span>).</span>
+<span class="rule-line"><span class="num">03</span>     <span class="kw">CONFIRM</span> with user <span class="kw">IF</span> context suggests calendar.</span>
+<span class="rule-line"><span class="num">04</span></span>
+<span class="rule-line"><span class="num">05</span>  <span class="kw">WHEN</span> query references <span class="em">"revenue"</span> without qualifier:</span>
+<span class="rule-line"><span class="num">06</span>     <span class="kw">USE</span> <span class="em">recognized_revenue</span> (not booked, not invoiced).</span>
+<span class="rule-line"><span class="num">07</span>     <span class="kw">EXCLUDE</span> deferred revenue unless asked.</span>
+<span class="rule-line"><span class="num">08</span></span>
+<span class="rule-line"><span class="num">09</span>  <span class="kw">WHEN</span> query involves currency:</span>
+<span class="rule-line"><span class="num">10</span>     <span class="kw">USE</span> month-end FX from <span class="em">dim_fx_rates</span>.</span>
+<span class="rule-line"><span class="num">11</span>     <span class="kw">DEFAULT</span> currency: USD.</span>
+<span class="rule-line"><span class="num">12</span></span>
+<span class="rule-line"><span class="num">13</span>  <span class="kw">WHEN</span> query references <span class="em">"MRR"</span>:</span>
+<span class="rule-line"><span class="num">14</span>     <span class="kw">USE</span> subscriptions.monthly_value.</span>
+<span class="rule-line"><span class="num">15</span>     <span class="kw">FILTER</span> status = <span class="em">'active'</span>.</span>
+              </div>
+              <div class="kg-foot">
+                <div class="saved"><span class="material-symbols-rounded" style="font-size:14px">check_circle</span>All changes saved · v2.4</div>
+                <div>Activates on query tagged <b>Finance</b></div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="kg-side">
+            <div class="kg-side-block">
+              <div class="kg-side-lbl">Version history</div>
+              <div class="ver-item current">
+                <div class="ver-lbl">Current <span class="v-tag">v2.4</span></div>
+                <div class="ver-meta">Just now · Raj S.</div>
+              </div>
+              <div class="ver-item">
+                <div class="ver-lbl">Previous <span class="v-tag">v2.3</span></div>
+                <div class="ver-meta">2 days ago · Meera K.</div>
+              </div>
+              <div class="ver-item">
+                <div class="ver-lbl">Previous <span class="v-tag">v2.2</span></div>
+                <div class="ver-meta">Last week · Raj S.</div>
+              </div>
+            </div>
+            <div class="kg-side-block">
+              <div class="kg-side-lbl">Activation terms</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <span class="tp-tag">revenue</span>
+                <span class="tp-tag">MRR</span>
+                <span class="tp-tag">quarter</span>
+                <span class="tp-tag">fiscal</span>
+                <span class="tp-tag">churn</span>
+                <span class="tp-tag">margin</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELEMETRY -->
+    <div class="view" id="view-telemetry">
+      <div class="view-content">
+        <div class="sec-head">
+          <div>
+            <h2>Telemetry Insights</h2>
+            <div class="sub">Usage analytics across your Karl deployment. Admin only.</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-sec"><span class="material-symbols-rounded">download</span>Export</button>
+            <button class="btn btn-sec"><span class="material-symbols-rounded">tune</span>Alerts</button>
+          </div>
+        </div>
+
+        <div class="tel-filters">
+          <div class="tel-filter"><label>Period</label><select class="tel-select"><option>Last 30 days</option><option>Last 7 days</option><option>This quarter</option></select></div>
+          <div class="tel-filter"><label>Team</label><select class="tel-select"><option>All teams</option><option>Finance</option><option>Operations</option></select></div>
+          <div class="tel-filter"><label>Source</label><select class="tel-select"><option>All sources</option><option>sales_warehouse</option></select></div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-lbl">Queries this month</div><div class="kpi-num">14,280</div><div class="kpi-delta">+28% vs last month</div></div>
+          <div class="kpi"><div class="kpi-lbl">Active users</div><div class="kpi-num">147</div><div class="kpi-delta">+12 this month</div></div>
+          <div class="kpi"><div class="kpi-lbl">Avg response</div><div class="kpi-num">1.4<span style="font-size:16px;color:var(--text-muted)">s</span></div><div class="kpi-delta">−0.2s</div></div>
+          <div class="kpi"><div class="kpi-lbl">Success rate</div><div class="kpi-num">94.2<span style="font-size:16px;color:var(--text-muted)">%</span></div><div class="kpi-delta">+1.8pp</div></div>
+        </div>
+
+        <div class="tel-grid">
+          <div class="tel-card">
+            <div class="tel-card-head">
+              <div>
+                <div class="tel-card-ttl">Query volume — last 8 weeks</div>
+                <div class="tel-card-sub">All sources, all teams</div>
+              </div>
+            </div>
+            <div class="chart-bars">
+              <div class="bar-col"><div class="bar-bar" style="height:40%"></div><div class="bar-col-label">W1</div></div>
+              <div class="bar-col"><div class="bar-bar" style="height:55%"></div><div class="bar-col-label">W2</div></div>
+              <div class="bar-col"><div class="bar-bar" style="height:48%"></div><div class="bar-col-label">W3</div></div>
+              <div class="bar-col"><div class="bar-bar" style="height:72%"></div><div class="bar-col-label">W4</div></div>
+              <div class="bar-col"><div class="bar-bar" style="height:68%"></div><div class="bar-col-label">W5</div></div>
+              <div class="bar-col"><div class="bar-bar" style="height:85%"></div><div class="bar-col-label">W6</div></div>
+              <div class="bar-col"><div class="bar-bar" style="height:92%"></div><div class="bar-col-label">W7</div></div>
+              <div class="bar-col"><div class="bar-bar accent" style="height:100%"></div><div class="bar-col-label">W8</div></div>
+            </div>
+          </div>
+
+          <div class="tel-card">
+            <div class="tel-card-head">
+              <div>
+                <div class="tel-card-ttl">Query distribution</div>
+                <div class="tel-card-sub">This month</div>
+              </div>
+            </div>
+            <div class="breakdown">
+              <div class="bd-row"><div class="label">Revenue</div><div class="track"><div class="fill" style="width:78%;background:var(--orange)"></div></div><div class="val">4.8k</div></div>
+              <div class="bd-row"><div class="label">Customer</div><div class="track"><div class="fill" style="width:62%;background:var(--cyan)"></div></div><div class="val">3.2k</div></div>
+              <div class="bd-row"><div class="label">Operations</div><div class="track"><div class="fill" style="width:44%;background:var(--blue)"></div></div><div class="val">2.1k</div></div>
+              <div class="bd-row"><div class="label">Product</div><div class="track"><div class="fill" style="width:38%;background:var(--amber)"></div></div><div class="val">1.8k</div></div>
+              <div class="bd-row"><div class="label">HR</div><div class="track"><div class="fill" style="width:22%;background:var(--green)"></div></div><div class="val">842</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <div class="view" id="view-error">
+      <div class="err-container">
+        <div class="err-icon"><span class="material-symbols-rounded">error</span></div>
+        <h2>Karl couldn't answer this question.</h2>
+        <p>The query referenced a field Karl couldn't find in <b>sales_warehouse</b>. Add a training pair or rephrase.</p>
+        <div class="err-details">
+          <h4>What happened</h4>
+          <code>Query: "Churn rate for VIP customers in Q2?"<br>Error: Column "customer_tier" not found<br>Suggestion: Add a training pair defining "VIP customers".</code>
+        </div>
+        <div class="err-actions">
+          <button class="btn btn-sec" onclick="showView('conversation')"><span class="material-symbols-rounded">arrow_back</span>Back</button>
+          <button class="btn btn-sec" onclick="showView('training')"><span class="material-symbols-rounded">school</span>Add pair</button>
+          <button class="btn btn-pri"><span class="material-symbols-rounded">refresh</span>Try again</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast">
+  <span class="material-symbols-rounded">check_circle</span>
+  <span id="toastMsg">Saved</span>
+</div>
+
+<script>
+const roleConfig={
+  priya:{name:'Priya Nair',role:'Business User',initial:'P',color:'var(--cyan)',access:['home','conversation']},
+  raj:{name:'Raj Srinivasan',role:'Power User',initial:'R',color:'var(--orange)',access:['home','conversation','training','knowledge']},
+  meera:{name:'Meera Kapoor',role:'Administrator',initial:'M',color:'var(--blue-light)',access:['home','conversation','training','knowledge','telemetry']}
+};
+let currentRole='raj';
+
+function setRole(role,e){
+  currentRole=role;
+  const cfg=roleConfig[role];
+  document.getElementById('userName').textContent=cfg.name;
+  document.getElementById('userRole').textContent=cfg.role;
+  document.getElementById('userAvatar').textContent=cfg.initial;
+  document.getElementById('userAvatar').style.background=cfg.color;
+  document.getElementById('heroName').textContent=cfg.name.split(' ')[0];
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.sb-item[data-view]').forEach(item=>{
+    const view=item.dataset.view;
+    item.dataset.locked=cfg.access.includes(view)?'false':'true';
+    const lock=item.querySelector('.lock');
+    if(lock) lock.style.display=cfg.access.includes(view)?'none':'inline-block';
+  });
+  const activeView=document.querySelector('.view.active').id.replace('view-','');
+  if(!cfg.access.includes(activeView)) showView('home');
+  showToast('Viewing as '+cfg.name);
+}
+
+function showView(viewName){
+  const cfg=roleConfig[currentRole];
+  if(!cfg.access.includes(viewName)){
+    showToast(cfg.name+' cannot access '+viewName);
+    return;
+  }
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+viewName).classList.add('active');
+  document.querySelectorAll('.sb-item[data-view]').forEach(i=>i.classList.remove('active'));
+  const navItem=document.querySelector(`.sb-item[data-view="${viewName}"]`);
+  if(navItem) navItem.classList.add('active');
+  const titleMap={home:['WORK','Home'],conversation:['WORK','Conversation'],training:['CONFIGURE','Training Data'],knowledge:['CONFIGURE','Knowledge Guide'],telemetry:['ADMIN','Telemetry'],error:['WORK','Error']};
+  const [crumb,header]=titleMap[viewName]||['',''];
+  document.getElementById('pageCrumb').textContent=crumb;
+  document.getElementById('pageHeader').textContent=header;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleSQL(el){
+  const block=el.nextElementSibling;
+  block.classList.toggle('open');
+  el.innerHTML=block.classList.contains('open')?'<span class="material-symbols-rounded">code_off</span>Hide SQL':'<span class="material-symbols-rounded">code</span>View SQL';
+}
+
+function sendMessage(){
+  const input=document.getElementById('convInput');
+  const text=input.value.trim();
+  if(!text) return;
+  const msgs=document.getElementById('convMessages');
+  const userMsg=document.createElement('div');
+  userMsg.className='msg user';
+  userMsg.innerHTML=`<div class="msg-avatar user-av">${roleConfig[currentRole].initial}</div><div class="msg-body"><div class="msg-name">You</div>${text}</div>`;
+  msgs.appendChild(userMsg);
+  setTimeout(()=>{
+    const k=document.createElement('div');
+    k.className='msg';
+    k.innerHTML=`<div class="msg-avatar karl">K</div><div class="msg-body"><div class="msg-name">Karl</div>Interpreting "${text}" against <b>sales_warehouse</b>… <i style="color:var(--text-light);font-size:12.5px">(Demo: NL→SQL runs in production.)</i></div>`;
+    msgs.appendChild(k);
+    window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  },400);
+  input.value='';
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+
+function askFollowup(text){
+  document.getElementById('convInput').value=text;
+  sendMessage();
+}
+
+function setKG(el){
+  document.querySelectorAll('.kg-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+let toastTimer;
+function showToast(msg){
+  document.getElementById('toastMsg').textContent=msg;
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+document.getElementById('convInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}
+});
+
+setTimeout(()=>{
+  const cfg=roleConfig[currentRole];
+  document.querySelectorAll('.sb-item[data-view]').forEach(item=>{
+    if(!cfg.access.includes(item.dataset.view)) item.dataset.locked='true';
+  });
+},50);
+</script>
+</body>
+</html>
